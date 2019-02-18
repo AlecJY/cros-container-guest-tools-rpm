@@ -3,7 +3,7 @@
 
 Name: cros-guest-tools		
 Version: 1.0
-Release: 0.5.%{snapshotdate}git%{hash}%{?dist}
+Release: 0.6.%{snapshotdate}git%{hash}%{?dist}
 Summary: Chromium OS integration meta package
 
 License: BSD	
@@ -215,7 +215,10 @@ desktop-file-install --dir=%{buildroot}%{_datadir}/applications cros-garcon/garc
 
 sed -i '/x-auth=\${HOME}\/.Xauthority/d' %{buildroot}%{_userunitdir}/sommelier-x@.service
 sed -i 's/false/true/g' %{buildroot}%{_sysconfdir}/skel/.config/cros-garcon.conf
+sed -i '1i if [ "$UID" -ne "0" ]; then' %{buildroot}%{_sysconfdir}/profile.d/sommelier.sh
 sed -i '1i export XDG_RUNTIME_DIR=/run/user/$UID' %{buildroot}%{_sysconfdir}/profile.d/sommelier.sh
+echo "fi" >> %{buildroot}%{_sysconfdir}/profile.d/sommelier.sh
+
 %files
 %dir %{_sysconfdir}/skel/.config
 %license LICENSE
@@ -288,6 +291,9 @@ sed -i '1i export XDG_RUNTIME_DIR=/run/user/$UID' %{buildroot}%{_sysconfdir}/pro
 %doc README.md
 
 %changelog
+* Sun Feb 17 2019 Jason Montleon jmontleo@redhat.com 1.0-0.6.20190213gitbf01129
+- Limit script to running as user
+
 * Sun Feb 17 2019 Jason Montleon jmontleo@redhat.com 1.0-0.5.20190213gitbf01129
 - Clean up rpmlint warnings
 
