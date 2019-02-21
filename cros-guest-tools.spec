@@ -3,7 +3,7 @@
 
 Name: cros-guest-tools		
 Version: 1.0
-Release: 0.6.%{snapshotdate}git%{hash}%{?dist}
+Release: 0.7.%{snapshotdate}git%{hash}%{?dist}
 Summary: Chromium OS integration meta package
 
 License: BSD	
@@ -40,7 +40,9 @@ This package overrides the default behavior of some core systemd units.
 systemctl mask systemd-journald-audit.socket
 
 %postun -n cros-systemd-overrides
+if [ $1 -eq 0 ] ; then
 systemctl unmask systemd-journald-audit.socket
+fi
 
 %package -n cros-adapta
 Summary: Chromium OS GTK Theme
@@ -291,6 +293,9 @@ echo "fi" >> %{buildroot}%{_sysconfdir}/profile.d/sommelier.sh
 %doc README.md
 
 %changelog
+* Thu Feb 21 2019 Jason Montleon jmontleo@redhat.com 1.0-0.7.20190213gitbf01129
+- Stop upgrade from unmasking systemd-journald-audit.socket
+
 * Sun Feb 17 2019 Jason Montleon jmontleo@redhat.com 1.0-0.6.20190213gitbf01129
 - Limit script to running as user
 
