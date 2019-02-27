@@ -1,9 +1,9 @@
-%global hash bf01129
-%global snapshotdate 20190213
+%global hash 4dc99dd
+%global snapshotdate 20190214
 
 Name: cros-guest-tools		
 Version: 1.0
-Release: 0.7.%{snapshotdate}git%{hash}%{?dist}
+Release: 0.8.%{snapshotdate}git%{hash}%{?dist}
 Summary: Chromium OS integration meta package
 
 License: BSD	
@@ -293,6 +293,9 @@ echo "fi" >> %{buildroot}%{_sysconfdir}/profile.d/sommelier.sh
 %doc README.md
 
 %changelog
+* Thu Feb 26 2019 Jason Montleon jmontleo@redhat.com 1.0-0.8.20190214git4dc99dd
+- Update to master 4dc99dd
+
 * Thu Feb 21 2019 Jason Montleon jmontleo@redhat.com 1.0-0.7.20190213gitbf01129
 - Stop upgrade from unmasking systemd-journald-audit.socket
 
