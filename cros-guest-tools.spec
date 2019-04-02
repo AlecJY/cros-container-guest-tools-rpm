@@ -3,7 +3,7 @@
 
 Name: cros-guest-tools		
 Version: 1.0
-Release: 0.8.%{snapshotdate}git%{hash}%{?dist}
+Release: 0.9.%{snapshotdate}git%{hash}%{?dist}
 Summary: Chromium OS integration meta package
 
 License: BSD	
@@ -12,6 +12,15 @@ Source0: https://chromium.googlesource.com/chromiumos/containers/cros-container-
 
 BuildArch: noarch
 BuildRequires: systemd
+Recommends: bash-completion
+Recommends: bzip2
+Recommends: curl
+Recommends: dbus-x11
+Recommends: file
+Recommends: git
+Recommends: gnupg
+Recommends: less
+Recommends: libXScrnSaver
 Requires: cros-adapta = %{version}-%{release}
 Requires: cros-garcon = %{version}-%{release}
 Requires: cros-notificationd = %{version}-%{release}
@@ -22,6 +31,9 @@ Requires: cros-sommelier-config = %{version}-%{release}
 Requires: cros-systemd-overrides = %{version}-%{release}
 Requires: cros-ui-config = %{version}-%{release}
 Requires: cros-wayland = %{version}-%{release}
+Recommends: usbutils
+Recommends: vim-enhanced
+Recommends: wget
 
 %description
 This package has dependencies on all other packages necessary for Chromium OS
@@ -61,6 +73,8 @@ correct location in the container.
 %package -n cros-garcon
 Summary: Chromium OS Garcon Bridge
 BuildRequires: desktop-file-utils
+Requires: PackageKit
+Requires: mailcap
 Requires: systemd
 BuildArch: noarch
 
@@ -109,14 +123,30 @@ This package installs unit-files and support scripts for enabling SFTP
 integration with Chromium OS.
 
 %post -n cros-sftp
-%systemd_user_post cros-sftp.service
+%systemd_post cros-sftp.service
 
 %preun -n cros-sftp
-%systemd_user_preun cros-sftp.service
+%systemd_preun cros-sftp.service
 
 %package -n cros-sommelier
 Summary: This package installs unit-files and support scripts for sommelier
+Requires: xorg-x11-fonts-100dpi
+Requires: xorg-x11-fonts-75dpi
+Requires: xorg-x11-fonts-cyrillic
+Requires: xorg-x11-fonts-ISO8859-1-100dpi
+Requires: xorg-x11-fonts-ISO8859-14-100dpi
+Requires: xorg-x11-fonts-ISO8859-14-75dpi
+Requires: xorg-x11-fonts-ISO8859-15-100dpi
+Requires: xorg-x11-fonts-ISO8859-15-75dpi
+Requires: xorg-x11-fonts-ISO8859-1-75dpi
+Requires: xorg-x11-fonts-ISO8859-2-100dpi
+Requires: xorg-x11-fonts-ISO8859-2-75dpi
+Requires: xorg-x11-fonts-ISO8859-9-100dpi
+Requires: xorg-x11-fonts-ISO8859-9-75dpi
+Requires: xorg-x11-fonts-misc
+Requires: xorg-x11-fonts-Type1
 Requires: xorg-x11-xauth
+Requires: vim-common
 BuildArch: noarch
 
 %description -n cros-sommelier
@@ -174,6 +204,7 @@ mkdir -p %{buildroot}%{_sysconfdir}/xdg
 mkdir -p %{buildroot}%{_sysconfdir}/profile.d
 mkdir -p %{buildroot}%{_sysconfdir}/skel/.config
 mkdir -p %{buildroot}%{_udevrulesdir}
+mkdir -p %{buildroot}%{_unitdir}
 mkdir -p %{buildroot}%{_userunitdir}
 mkdir -p %{buildroot}%{_datarootdir}/applications
 mkdir -p %{buildroot}%{_datarootdir}/dbus-1/services
@@ -204,7 +235,7 @@ install -m 644 cros-garcon/cros-garcon.service %{buildroot}%{_userunitdir}/cros-
 install -m 644 cros-pulse-config/cros-pulse-config.service %{buildroot}%{_userunitdir}/cros-pulse-config.service
 install -m 644 cros-sommelier/sommelier@.service %{buildroot}%{_userunitdir}/sommelier@.service
 install -m 644 cros-sommelier/sommelier-x@.service %{buildroot}%{_userunitdir}/sommelier-x@.service
-install -m 644 cros-sftp/cros-sftp.service %{buildroot}%{_userunitdir}/cros-sftp.service
+install -m 644 cros-sftp/cros-sftp.service %{buildroot}%{_unitdir}/cros-sftp.service
 
 install -m 644 cros-garcon/cros-garcon-override.conf %{buildroot}%{_userunitdir}/cros-garcon.service.d/cros-garcon-override.conf
 install -m 644 cros-sommelier-config/cros-sommelier-override.conf %{buildroot}%{_userunitdir}/sommelier@0.service.d/cros-sommelier-override.conf
@@ -215,7 +246,8 @@ install -m 644 cros-sommelier-config/cros-sommelier-low-density-override.conf %{
 sed -i 's/OnlyShowIn=Never/OnlyShowIn=X-Never/g' cros-garcon/garcon_host_browser.desktop
 desktop-file-install --dir=%{buildroot}%{_datadir}/applications cros-garcon/garcon_host_browser.desktop
 
-sed -i '/x-auth=\${HOME}\/.Xauthority/d' %{buildroot}%{_userunitdir}/sommelier-x@.service
+sed -i -e '13,20d' %{buildroot}%{_userunitdir}/sommelier-x@.service
+sed -i '13iEnvironment="SOMMELIER_XFONT_PATH=/usr/share/X11/fonts/misc,/usr/share/X11/fonts/cyrillic,/usr/share/X11/fonts/100dpi/:unscaled,/usr/share/X11/fonts/75dpi/:unscaled,/usr/share/X11/fonts/Type1,/usr/share/X11/fonts/100dpi,/usr/share/X11/fonts/75dpi,built-ins"' %{buildroot}%{_userunitdir}/sommelier-x@.service
 sed -i 's/false/true/g' %{buildroot}%{_sysconfdir}/skel/.config/cros-garcon.conf
 sed -i '1i if [ "$UID" -ne "0" ]; then' %{buildroot}%{_sysconfdir}/profile.d/sommelier.sh
 sed -i '1i export XDG_RUNTIME_DIR=/run/user/$UID' %{buildroot}%{_sysconfdir}/profile.d/sommelier.sh
@@ -256,7 +288,7 @@ echo "fi" >> %{buildroot}%{_sysconfdir}/profile.d/sommelier.sh
 %doc README.md
 
 %files -n cros-sftp
-%{_userunitdir}/cros-sftp.service
+%{_unitdir}/cros-sftp.service
 %license LICENSE
 %doc README.md
 
@@ -293,6 +325,11 @@ echo "fi" >> %{buildroot}%{_sysconfdir}/profile.d/sommelier.sh
 %doc README.md
 
 %changelog
+* Fri Mar 29 2019 Jason Montleon jmontleo@redhat.com 1.0-0.9.20190214git4dc99dd
+- make cros-sftp a system service
+- add missing dependencies
+- fix distro specific sommelier-x issues
+
 * Tue Feb 26 2019 Jason Montleon jmontleo@redhat.com 1.0-0.8.20190214git4dc99dd
 - Update to master 4dc99dd
 
