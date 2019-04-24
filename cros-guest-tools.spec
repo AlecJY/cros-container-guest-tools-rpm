@@ -1,9 +1,9 @@
-%global hash 4dc99dd
-%global snapshotdate 20190214
+%global hash 8f20e06
+%global snapshotdate 20190324
 
 Name: cros-guest-tools		
 Version: 1.0
-Release: 0.9.%{snapshotdate}git%{hash}%{?dist}
+Release: 0.10.%{snapshotdate}git%{hash}%{?dist}
 Summary: Chromium OS integration meta package
 
 License: BSD	
@@ -19,8 +19,12 @@ Recommends: dbus-x11
 Recommends: file
 Recommends: git
 Recommends: gnupg
+Recommends: iputils
 Recommends: less
 Recommends: libXScrnSaver
+Recommends: usbutils
+Recommends: vim-enhanced
+Recommends: wget
 Requires: cros-adapta = %{version}-%{release}
 Requires: cros-garcon = %{version}-%{release}
 Requires: cros-notificationd = %{version}-%{release}
@@ -31,9 +35,6 @@ Requires: cros-sommelier-config = %{version}-%{release}
 Requires: cros-systemd-overrides = %{version}-%{release}
 Requires: cros-ui-config = %{version}-%{release}
 Requires: cros-wayland = %{version}-%{release}
-Recommends: usbutils
-Recommends: vim-enhanced
-Recommends: wget
 
 %description
 This package has dependencies on all other packages necessary for Chromium OS
@@ -325,6 +326,9 @@ echo "fi" >> %{buildroot}%{_sysconfdir}/profile.d/sommelier.sh
 %doc README.md
 
 %changelog
+* Wed Apr 24 2019 Jason Montleon jmontleo@redhat.com 1.0-0.10.20190324git8f20e06
+- Update to 8f20e06
+
 * Fri Mar 29 2019 Jason Montleon jmontleo@redhat.com 1.0-0.9.20190214git4dc99dd
 - make cros-sftp a system service
 - add missing dependencies
