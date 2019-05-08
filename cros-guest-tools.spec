@@ -249,6 +249,7 @@ desktop-file-install --dir=%{buildroot}%{_datadir}/applications cros-garcon/garc
 
 sed -i -e '13,20d' %{buildroot}%{_userunitdir}/sommelier-x@.service
 sed -i '13iEnvironment="SOMMELIER_XFONT_PATH=/usr/share/X11/fonts/misc,/usr/share/X11/fonts/cyrillic,/usr/share/X11/fonts/100dpi/:unscaled,/usr/share/X11/fonts/75dpi/:unscaled,/usr/share/X11/fonts/Type1,/usr/share/X11/fonts/100dpi,/usr/share/X11/fonts/75dpi,built-ins"' %{buildroot}%{_userunitdir}/sommelier-x@.service
+sed -i 's/module-alsa-sink/module-alsa-sink tsched=0/' %{buildroot}%{_userunitdir}/cros-pulse-config.service
 sed -i 's/false/true/g' %{buildroot}%{_sysconfdir}/skel/.config/cros-garcon.conf
 sed -i '1i if [ "$UID" -ne "0" ]; then' %{buildroot}%{_sysconfdir}/profile.d/sommelier.sh
 sed -i '1i export XDG_RUNTIME_DIR=/run/user/$UID' %{buildroot}%{_sysconfdir}/profile.d/sommelier.sh
@@ -326,6 +327,9 @@ echo "fi" >> %{buildroot}%{_sysconfdir}/profile.d/sommelier.sh
 %doc README.md
 
 %changelog
+* Tue May 07 2019 Jason Montleon jmontleo@redhat.com 1.0-0.11.20190324git8f20e06
+- Update cros-pulse-config to load with tsched=0 to fix sound skipping
+
 * Wed Apr 24 2019 Jason Montleon jmontleo@redhat.com 1.0-0.10.20190324git8f20e06
 - Update to 8f20e06
 
