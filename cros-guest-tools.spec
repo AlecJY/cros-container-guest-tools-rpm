@@ -3,12 +3,14 @@
 
 Name: cros-guest-tools		
 Version: 1.0
-Release: 0.12.%{snapshotdate}git%{hash}%{?dist}
+Release: 0.13.%{snapshotdate}git%{hash}%{?dist}
 Summary: Chromium OS integration meta package
 
 License: BSD	
 URL: https://chromium.googlesource.com/chromiumos/containers/cros-container-guest-tools/
 Source0: https://chromium.googlesource.com/chromiumos/containers/cros-container-guest-tools/+archive/%{hash}.tar.gz#/%{name}-%{hash}.tar.gz
+Source1: sommelier-x-prep.service
+Source2: sommelier-x-finish.service
 
 BuildArch: noarch
 BuildRequires: systemd
@@ -27,6 +29,7 @@ Recommends: vim-enhanced
 Recommends: wget
 Requires: cros-adapta = %{version}-%{release}
 Requires: cros-garcon = %{version}-%{release}
+Requires: cros-gpu = %{version}-%{release}
 Requires: cros-notificationd = %{version}-%{release}
 Requires: cros-pulse-config = %{version}-%{release}
 Requires: cros-sftp = %{version}-%{release}
@@ -88,6 +91,24 @@ Chromium OS.
 
 %preun -n cros-garcon
 %systemd_user_preun cros-garcon.service
+
+%package -n cros-gpu
+Summary: Chromium OS 3D GPU workarounds
+BuildRequires: desktop-file-utils
+Requires: mesa-dri-drivers
+Requires: systemd
+BuildArch: noarch
+
+%description -n cros-gpu
+This package systemd unit files to workaround crostini and mesa dri limitations.
+
+%post -n cros-gpu
+%systemd_user_post sommelier-x-prep.service
+%systemd_user_post sommelier-x-finish.service
+
+%preun -n cros-gpu
+%systemd_user_preun sommelier-x-prep.service
+%systemd_user_preun sommelier-x-finish.service
 
 %package -n cros-notificationd
 Summary: Chromium OS Notification Bridge
@@ -238,6 +259,8 @@ install -m 644 cros-sommelier/sommelier@.service %{buildroot}%{_userunitdir}/som
 install -m 644 cros-sommelier/sommelier-x@.service %{buildroot}%{_userunitdir}/sommelier-x@.service
 install -m 644 cros-sftp/cros-sftp.service %{buildroot}%{_unitdir}/cros-sftp.service
 
+install -m 644 %{SOURCE1} %{buildroot}%{_userunitdir}/sommelier-x-prep.service
+install -m 644 %{SOURCE2} %{buildroot}%{_userunitdir}/sommelier-x-finish.service
 install -m 644 cros-garcon/cros-garcon-override.conf %{buildroot}%{_userunitdir}/cros-garcon.service.d/cros-garcon-override.conf
 install -m 644 cros-sommelier-config/cros-sommelier-override.conf %{buildroot}%{_userunitdir}/sommelier@0.service.d/cros-sommelier-override.conf
 install -m 644 cros-sommelier-config/cros-sommelier-x-override.conf %{buildroot}%{_userunitdir}/sommelier-x@0.service.d/cros-sommelier-x-override.conf
@@ -271,6 +294,12 @@ echo "fi" >> %{buildroot}%{_sysconfdir}/profile.d/sommelier.sh
 %config(noreplace) %{_sysconfdir}/skel/.config/cros-garcon.conf
 %{_userunitdir}/cros-garcon.service
 %{_userunitdir}/cros-garcon.service.d
+%license LICENSE
+%doc README.md
+
+%files -n cros-gpu
+%{_userunitdir}/sommelier-x-prep.service
+%{_userunitdir}/sommelier-x-finish.service
 %license LICENSE
 %doc README.md
 
@@ -326,7 +355,10 @@ echo "fi" >> %{buildroot}%{_sysconfdir}/profile.d/sommelier.sh
 %doc README.md
 
 %changelog
-* Tue May 07 2019 Jason Montleon jmontleo@redhat.com 1.0-0.12.20190703gita30bd3e
+* Sun Jul 07 2019 Jason Montleon jmontleo@redhat.com 1.0-0.13.20190703gita30bd3e
+- Added cros-gpu package with service to work around 3d acceleration issues.
+
+* Wed Jul 03 2019 Jason Montleon jmontleo@redhat.com 1.0-0.12.20190703gita30bd3e
 - Updated to master a30bd3e
 - Removed tsched=0 fix. This is now default upstream
 
