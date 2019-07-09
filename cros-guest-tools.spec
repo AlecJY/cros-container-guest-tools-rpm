@@ -3,14 +3,12 @@
 
 Name: cros-guest-tools		
 Version: 1.0
-Release: 0.13.%{snapshotdate}git%{hash}%{?dist}
+Release: 0.14.%{snapshotdate}git%{hash}%{?dist}
 Summary: Chromium OS integration meta package
 
 License: BSD	
 URL: https://chromium.googlesource.com/chromiumos/containers/cros-container-guest-tools/
 Source0: https://chromium.googlesource.com/chromiumos/containers/cros-container-guest-tools/+archive/%{hash}.tar.gz#/%{name}-%{hash}.tar.gz
-Source1: sommelier-x-prep.service
-Source2: sommelier-x-finish.service
 
 BuildArch: noarch
 BuildRequires: systemd
@@ -29,7 +27,6 @@ Recommends: vim-enhanced
 Recommends: wget
 Requires: cros-adapta = %{version}-%{release}
 Requires: cros-garcon = %{version}-%{release}
-Requires: cros-gpu = %{version}-%{release}
 Requires: cros-notificationd = %{version}-%{release}
 Requires: cros-pulse-config = %{version}-%{release}
 Requires: cros-sftp = %{version}-%{release}
@@ -91,24 +88,6 @@ Chromium OS.
 
 %preun -n cros-garcon
 %systemd_user_preun cros-garcon.service
-
-%package -n cros-gpu
-Summary: Chromium OS 3D GPU workarounds
-BuildRequires: desktop-file-utils
-Requires: mesa-dri-drivers
-Requires: systemd
-BuildArch: noarch
-
-%description -n cros-gpu
-This package systemd unit files to workaround crostini and mesa dri limitations.
-
-%post -n cros-gpu
-%systemd_user_post sommelier-x-prep.service
-%systemd_user_post sommelier-x-finish.service
-
-%preun -n cros-gpu
-%systemd_user_preun sommelier-x-prep.service
-%systemd_user_preun sommelier-x-finish.service
 
 %package -n cros-notificationd
 Summary: Chromium OS Notification Bridge
@@ -259,8 +238,6 @@ install -m 644 cros-sommelier/sommelier@.service %{buildroot}%{_userunitdir}/som
 install -m 644 cros-sommelier/sommelier-x@.service %{buildroot}%{_userunitdir}/sommelier-x@.service
 install -m 644 cros-sftp/cros-sftp.service %{buildroot}%{_unitdir}/cros-sftp.service
 
-install -m 644 %{SOURCE1} %{buildroot}%{_userunitdir}/sommelier-x-prep.service
-install -m 644 %{SOURCE2} %{buildroot}%{_userunitdir}/sommelier-x-finish.service
 install -m 644 cros-garcon/cros-garcon-override.conf %{buildroot}%{_userunitdir}/cros-garcon.service.d/cros-garcon-override.conf
 install -m 644 cros-sommelier-config/cros-sommelier-override.conf %{buildroot}%{_userunitdir}/sommelier@0.service.d/cros-sommelier-override.conf
 install -m 644 cros-sommelier-config/cros-sommelier-x-override.conf %{buildroot}%{_userunitdir}/sommelier-x@0.service.d/cros-sommelier-x-override.conf
@@ -271,7 +248,7 @@ sed -i 's/OnlyShowIn=Never/OnlyShowIn=X-Never/g' cros-garcon/garcon_host_browser
 desktop-file-install --dir=%{buildroot}%{_datadir}/applications cros-garcon/garcon_host_browser.desktop
 
 sed -i -e '13,20d' %{buildroot}%{_userunitdir}/sommelier-x@.service
-sed -i '13iEnvironment="SOMMELIER_XFONT_PATH=/usr/share/X11/fonts/misc,/usr/share/X11/fonts/cyrillic,/usr/share/X11/fonts/100dpi/:unscaled,/usr/share/X11/fonts/75dpi/:unscaled,/usr/share/X11/fonts/Type1,/usr/share/X11/fonts/100dpi,/usr/share/X11/fonts/75dpi,built-ins"' %{buildroot}%{_userunitdir}/sommelier-x@.service
+sed -i '13iEnvironment="SOMMELIER_XFONT_PATH=/usr/share/X11/fonts/misc,/usr/share/X11/fonts/cyrillic,/usr/share/X11/fonts/100dpi/:unscaled,/usr/share/X11/fonts/75dpi/:unscaled,/usr/share/X11/fonts/Type1,/usr/share/X11/fonts/100dpi,/usr/share/X11/fonts/75dpi,built-ins"\nEnvironment="LIBGL_DRIVERS_PATH=/opt/google/cros-containers/lib/"' %{buildroot}%{_userunitdir}/sommelier-x@.service
 sed -i 's/false/true/g' %{buildroot}%{_sysconfdir}/skel/.config/cros-garcon.conf
 sed -i '1i if [ "$UID" -ne "0" ]; then' %{buildroot}%{_sysconfdir}/profile.d/sommelier.sh
 sed -i '1i export XDG_RUNTIME_DIR=/run/user/$UID' %{buildroot}%{_sysconfdir}/profile.d/sommelier.sh
@@ -294,12 +271,6 @@ echo "fi" >> %{buildroot}%{_sysconfdir}/profile.d/sommelier.sh
 %config(noreplace) %{_sysconfdir}/skel/.config/cros-garcon.conf
 %{_userunitdir}/cros-garcon.service
 %{_userunitdir}/cros-garcon.service.d
-%license LICENSE
-%doc README.md
-
-%files -n cros-gpu
-%{_userunitdir}/sommelier-x-prep.service
-%{_userunitdir}/sommelier-x-finish.service
 %license LICENSE
 %doc README.md
 
@@ -355,6 +326,10 @@ echo "fi" >> %{buildroot}%{_sysconfdir}/profile.d/sommelier.sh
 %doc README.md
 
 %changelog
+* Tue Jul 09 2019 Jason Montleon jmontleo@redhat.com 1.0-0.14.20190703gita30bd3e
+- Removed cros-gpu and workaround services.
+- Added an Environment setting to sommelier-x service to get it working instead
+
 * Sun Jul 07 2019 Jason Montleon jmontleo@redhat.com 1.0-0.13.20190703gita30bd3e
 - Added cros-gpu package with service to work around 3d acceleration issues.
 
