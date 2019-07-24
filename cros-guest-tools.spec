@@ -3,7 +3,7 @@
 
 Name: cros-guest-tools		
 Version: 1.0
-Release: 0.14.%{snapshotdate}git%{hash}%{?dist}
+Release: 0.15.%{snapshotdate}git%{hash}%{?dist}
 Summary: Chromium OS integration meta package
 
 License: BSD	
@@ -326,6 +326,9 @@ echo "fi" >> %{buildroot}%{_sysconfdir}/profile.d/sommelier.sh
 %doc README.md
 
 %changelog
+* Wed Jul 24 2019 Fedora Release Engineering <releng@fedoraproject.org> - 1.0-0.15.20190703gita30bd3e
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_31_Mass_Rebuild
+
 * Tue Jul 09 2019 Jason Montleon jmontleo@redhat.com 1.0-0.14.20190703gita30bd3e
 - Removed cros-gpu and workaround services.
 - Added an Environment setting to sommelier-x service to get it working instead
