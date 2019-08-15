@@ -1,9 +1,9 @@
-%global hash a30bd3e
-%global snapshotdate 20190703
+%global hash 4e1b573
+%global snapshotdate 20190815
 
 Name: cros-guest-tools		
 Version: 1.0
-Release: 0.15.%{snapshotdate}git%{hash}%{?dist}
+Release: 0.16.%{snapshotdate}git%{hash}%{?dist}
 Summary: Chromium OS integration meta package
 
 License: BSD	
@@ -131,6 +131,7 @@ integration with Chromium OS.
 
 %package -n cros-sommelier
 Summary: This package installs unit-files and support scripts for sommelier
+Requires: gtk2
 Requires: xorg-x11-fonts-100dpi
 Requires: xorg-x11-fonts-75dpi
 Requires: xorg-x11-fonts-cyrillic
@@ -146,6 +147,7 @@ Requires: xorg-x11-fonts-ISO8859-9-100dpi
 Requires: xorg-x11-fonts-ISO8859-9-75dpi
 Requires: xorg-x11-fonts-misc
 Requires: xorg-x11-fonts-Type1
+Requires: xorg-x11-utils
 Requires: xorg-x11-xauth
 Requires: vim-common
 BuildArch: noarch
@@ -220,7 +222,7 @@ ln -sf /opt/google/cros-containers/bin/sommelier %{buildroot}%{_bindir}/sommelie
 ln -sf /opt/google/cros-containers/cros-adapta %{buildroot}%{_datarootdir}/themes/CrosAdapta
 
 install -m 644 cros-sommelier/sommelierrc  %{buildroot}%{_sysconfdir}/sommelierrc
-install -m 755 cros-sommelier/sommelier.sh %{buildroot}%{_sysconfdir}/profile.d/sommelier.sh
+install -m 644 cros-sommelier/sommelier.sh %{buildroot}%{_sysconfdir}/profile.d/sommelier.sh
 install -m 644 cros-garcon/skel.cros-garcon.conf %{buildroot}%{_sysconfdir}/skel/.config/cros-garcon.conf
 install -m 644 cros-wayland/skel.weston.ini %{buildroot}%{_sysconfdir}/skel/.config/weston.ini
 install -m 644 cros-wayland/10-cros-virtwl.rules %{buildroot}%{_udevrulesdir}/10-cros-virtwl.rules
@@ -326,6 +328,9 @@ echo "fi" >> %{buildroot}%{_sysconfdir}/profile.d/sommelier.sh
 %doc README.md
 
 %changelog
+* Thu Aug 15 2019 Jason Montleon jmontleo@redhat.com 1.0.0.16.20190815git4e1b573
+- Update to master 4e1b573
+
 * Wed Jul 24 2019 Fedora Release Engineering <releng@fedoraproject.org> - 1.0-0.15.20190703gita30bd3e
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_31_Mass_Rebuild
 
