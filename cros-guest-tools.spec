@@ -1,9 +1,9 @@
-%global hash 4e1b573
-%global snapshotdate 20190815
+%global hash 939ae3e
+%global snapshotdate 20190913
 
 Name: cros-guest-tools		
 Version: 1.0
-Release: 0.16.%{snapshotdate}git%{hash}%{?dist}
+Release: 0.17.%{snapshotdate}git%{hash}%{?dist}
 Summary: Chromium OS integration meta package
 
 License: BSD	
@@ -17,6 +17,7 @@ Recommends: bzip2
 Recommends: curl
 Recommends: dbus-x11
 Recommends: file
+Recommends: fuse
 Recommends: git
 Recommends: gnupg
 Recommends: iputils
@@ -32,6 +33,7 @@ Requires: cros-pulse-config = %{version}-%{release}
 Requires: cros-sftp = %{version}-%{release}
 Requires: cros-sommelier = %{version}-%{release}
 Requires: cros-sommelier-config = %{version}-%{release}
+Requires: cros-sudo-config = %{version}-%{release}
 Requires: cros-systemd-overrides = %{version}-%{release}
 Requires: cros-ui-config = %{version}-%{release}
 Requires: cros-wayland = %{version}-%{release}
@@ -172,6 +174,16 @@ BuildArch: noarch
 This package installs default configuration for sommelier that is ideal for
 integration with Chromium OS.
 
+%package -n cros-sudo-config
+Summary: sudo config for Chromium OS integration.
+Requires: sudo
+BuildArch: noarch
+
+%description -n cros-sudo-config
+sudo config for Chromium OS integration. This package installs default
+configuration for sudo to allow passwordless sudo access for the sudo group,
+and passwordless pkexec for the sudo group.
+
 %package -n cros-ui-config
 Summary: UI integration for Chromium OS
 Requires: dconf
@@ -217,10 +229,14 @@ mkdir -p %{buildroot}%{_userunitdir}/sommelier@0.service.d
 mkdir -p %{buildroot}%{_userunitdir}/sommelier@1.service.d
 mkdir -p %{buildroot}%{_userunitdir}/sommelier-x@0.service.d
 mkdir -p %{buildroot}%{_userunitdir}/sommelier-x@1.service.d
+mkdir -p %{buildroot}%{_sysconfdir}/sudoers.d
+mkdir -p %{buildroot}/var/lib/polkit-1/localauthority/10-vendor.d
 
 ln -sf /opt/google/cros-containers/bin/sommelier %{buildroot}%{_bindir}/sommelier
 ln -sf /opt/google/cros-containers/cros-adapta %{buildroot}%{_datarootdir}/themes/CrosAdapta
 
+install -m 440 cros-sudo-config/10-cros-nopasswd %{buildroot}%{_sysconfdir}/sudoers.d/10-cros-nopasswd
+install -m 440 cros-sudo-config/10-cros-nopasswd.pkla %{buildroot}/var/lib/polkit-1/localauthority/10-vendor.d/10-cros-nopasswd.pkla
 install -m 644 cros-sommelier/sommelierrc  %{buildroot}%{_sysconfdir}/sommelierrc
 install -m 644 cros-sommelier/sommelier.sh %{buildroot}%{_sysconfdir}/profile.d/sommelier.sh
 install -m 644 cros-garcon/skel.cros-garcon.conf %{buildroot}%{_sysconfdir}/skel/.config/cros-garcon.conf
@@ -281,6 +297,12 @@ echo "fi" >> %{buildroot}%{_sysconfdir}/profile.d/sommelier.sh
 %license LICENSE
 %doc README.md
 
+%files -n cros-sudo-config
+%config(noreplace) %{_sysconfdir}/sudoers.d/10-cros-nopasswd
+/var/lib/polkit-1/localauthority/10-vendor.d/10-cros-nopasswd.pkla
+%license LICENSE
+%doc README.md
+
 %files -n cros-systemd-overrides
 %license LICENSE
 %doc README.md
@@ -328,6 +350,10 @@ echo "fi" >> %{buildroot}%{_sysconfdir}/profile.d/sommelier.sh
 %doc README.md
 
 %changelog
+* Fri Sep 13 2019 Jason Montleon jmontleo@redhat.com 1.0.0.17.20190913git939ae3e
+- Update to master 939ae3e
+- Add missing cros-sudo-config
+
 * Thu Aug 15 2019 Jason Montleon jmontleo@redhat.com 1.0.0.16.20190815git4e1b573
 - Update to master 4e1b573
 
