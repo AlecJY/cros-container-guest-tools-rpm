@@ -1,15 +1,14 @@
-%global hash 939ae3e
-%global snapshotdate 20190913
+%global hash a93ea04
+%global snapshotdate 20191015
 
 Name: cros-guest-tools		
 Version: 1.0
-Release: 0.17.%{snapshotdate}git%{hash}%{?dist}
+Release: 0.18.%{snapshotdate}git%{hash}%{?dist}
 Summary: Chromium OS integration meta package
 
 License: BSD	
 URL: https://chromium.googlesource.com/chromiumos/containers/cros-container-guest-tools/
 Source0: https://chromium.googlesource.com/chromiumos/containers/cros-container-guest-tools/+archive/%{hash}.tar.gz#/%{name}-%{hash}.tar.gz
-
 BuildArch: noarch
 BuildRequires: systemd
 Recommends: bash-completion
@@ -26,7 +25,9 @@ Recommends: libXScrnSaver
 Recommends: usbutils
 Recommends: vim-enhanced
 Recommends: wget
+%if 0%{?fedora}
 Requires: cros-adapta = %{version}-%{release}
+%endif
 Requires: cros-garcon = %{version}-%{release}
 Requires: cros-notificationd = %{version}-%{release}
 Requires: cros-pulse-config = %{version}-%{release}
@@ -59,6 +60,7 @@ if [ $1 -eq 0 ] ; then
 systemctl unmask systemd-journald-audit.socket
 fi
 
+%if 0%{?fedora}
 %package -n cros-adapta
 Summary: Chromium OS GTK Theme
 Requires: filesystem
@@ -72,6 +74,7 @@ BuildArch: noarch
 %description -n cros-adapta
 This package provides symlinks which link the bind-mounted theme into the
 correct location in the container.
+%endif
 
 %package -n cros-garcon
 Summary: Chromium OS Garcon Bridge
@@ -233,7 +236,10 @@ mkdir -p %{buildroot}%{_sysconfdir}/sudoers.d
 mkdir -p %{buildroot}/var/lib/polkit-1/localauthority/10-vendor.d
 
 ln -sf /opt/google/cros-containers/bin/sommelier %{buildroot}%{_bindir}/sommelier
+
+%if 0%{?fedora}
 ln -sf /opt/google/cros-containers/cros-adapta %{buildroot}%{_datarootdir}/themes/CrosAdapta
+%endif
 
 install -m 440 cros-sudo-config/10-cros-nopasswd %{buildroot}%{_sysconfdir}/sudoers.d/10-cros-nopasswd
 install -m 440 cros-sudo-config/10-cros-nopasswd.pkla %{buildroot}/var/lib/polkit-1/localauthority/10-vendor.d/10-cros-nopasswd.pkla
@@ -255,7 +261,6 @@ install -m 644 cros-pulse-config/cros-pulse-config.service %{buildroot}%{_userun
 install -m 644 cros-sommelier/sommelier@.service %{buildroot}%{_userunitdir}/sommelier@.service
 install -m 644 cros-sommelier/sommelier-x@.service %{buildroot}%{_userunitdir}/sommelier-x@.service
 install -m 644 cros-sftp/cros-sftp.service %{buildroot}%{_unitdir}/cros-sftp.service
-
 install -m 644 cros-garcon/cros-garcon-override.conf %{buildroot}%{_userunitdir}/cros-garcon.service.d/cros-garcon-override.conf
 install -m 644 cros-sommelier-config/cros-sommelier-override.conf %{buildroot}%{_userunitdir}/sommelier@0.service.d/cros-sommelier-override.conf
 install -m 644 cros-sommelier-config/cros-sommelier-x-override.conf %{buildroot}%{_userunitdir}/sommelier-x@0.service.d/cros-sommelier-x-override.conf
@@ -277,10 +282,12 @@ echo "fi" >> %{buildroot}%{_sysconfdir}/profile.d/sommelier.sh
 %license LICENSE
 %doc README.md
 
+%if 0%{?fedora}
 %files -n cros-adapta
 %{_datarootdir}/themes/CrosAdapta
 %license LICENSE
 %doc README.md
+%endif
 
 %files -n cros-garcon
 %{_bindir}/garcon-terminal-handler
@@ -350,6 +357,10 @@ echo "fi" >> %{buildroot}%{_sysconfdir}/profile.d/sommelier.sh
 %doc README.md
 
 %changelog
+* Tue Oct 15 2019 Jason Montleon jmontleo@redhat.com 1.0-0.18.20191015gita93ea04
+- Update to upstream master
+- Removed cros-adapta theme for CentOS 8 due to missing dependencies
+
 * Fri Sep 13 2019 Jason Montleon jmontleo@redhat.com 1.0.0.17.20190913git939ae3e
 - Update to master 939ae3e
 - Add missing cros-sudo-config
