@@ -3,7 +3,7 @@
 
 Name: cros-guest-tools		
 Version: 1.0
-Release: 0.18.%{snapshotdate}git%{hash}%{?dist}
+Release: 0.19.%{snapshotdate}git%{hash}%{?dist}
 Summary: Chromium OS integration meta package
 
 License: BSD	
@@ -22,6 +22,7 @@ Recommends: gnupg
 Recommends: iputils
 Recommends: less
 Recommends: libXScrnSaver
+Recommends: mesa-dri-drivers
 Recommends: usbutils
 Recommends: vim-enhanced
 Recommends: wget
@@ -357,6 +358,9 @@ echo "fi" >> %{buildroot}%{_sysconfdir}/profile.d/sommelier.sh
 %doc README.md
 
 %changelog
+* Fri Oct 18 2019 Jason Montleon jmontleo@redhat.com 1.0-0.19.20191015gita93ea04
+- Add recommends for mesa-dri-drivers
+
 * Tue Oct 15 2019 Jason Montleon jmontleo@redhat.com 1.0-0.18.20191015gita93ea04
 - Update to upstream master
 - Removed cros-adapta theme for CentOS 8 due to missing dependencies
