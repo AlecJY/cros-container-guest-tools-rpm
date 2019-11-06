@@ -1,9 +1,9 @@
-%global hash a93ea04
-%global snapshotdate 20191015
+%global hash 37b5c2c
+%global snapshotdate 20191105
 
 Name: cros-guest-tools		
 Version: 1.0
-Release: 0.19.%{snapshotdate}git%{hash}%{?dist}
+Release: 0.21.%{snapshotdate}git%{hash}%{?dist}
 Summary: Chromium OS integration meta package
 
 License: BSD	
@@ -358,6 +358,12 @@ echo "fi" >> %{buildroot}%{_sysconfdir}/profile.d/sommelier.sh
 %doc README.md
 
 %changelog
+* Tue Nov 05 2019 Jason Montleon jmontleo@redhat.com 1.0-0.21.20191105git37b5c2c
+- Update to master 37b5c2c
+
+* Sat Nov 02 2019 Jason Montleon jmontleo@redhat.com 1.0-0.20.20191102gite218618
+- Update to master e218618
+
 * Fri Oct 18 2019 Jason Montleon jmontleo@redhat.com 1.0-0.19.20191015gita93ea04
 - Add recommends for mesa-dri-drivers
 
