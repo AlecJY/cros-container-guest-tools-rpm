@@ -1,9 +1,9 @@
-%global hash ce9fd9f
-%global snapshotdate 20191217
+%global hash 88d1189
+%global snapshotdate 20200115
 
 Name: cros-guest-tools		
 Version: 1.0
-Release: 0.23.%{snapshotdate}git%{hash}%{?dist}
+Release: 0.24.%{snapshotdate}git%{hash}%{?dist}
 Summary: Chromium OS integration meta package
 
 License: BSD	
@@ -30,6 +30,7 @@ Recommends: wget
 Requires: cros-adapta = %{version}-%{release}
 %endif
 Requires: cros-garcon = %{version}-%{release}
+Requires: cros-host-fonts = %{version}-%{release}
 Requires: cros-notificationd = %{version}-%{release}
 Requires: cros-pulse-config = %{version}-%{release}
 Requires: cros-sftp = %{version}-%{release}
@@ -81,6 +82,7 @@ correct location in the container.
 Summary: Chromium OS Garcon Bridge
 BuildRequires: desktop-file-utils
 Requires: PackageKit
+Requires: ansible
 Requires: mailcap
 Requires: systemd
 BuildArch: noarch
@@ -94,6 +96,14 @@ Chromium OS.
 
 %preun -n cros-garcon
 %systemd_user_preun cros-garcon.service
+
+%package -n cros-host-fonts
+Requires: fontpackages-filesystem
+Summary: Chromium OS Host Fonts Configuration
+
+%description -n cros-host-fonts
+Share fonts from Chromium OS. This package provides a config file to search
+for the shared Chromium OS font directory.
 
 %package -n cros-notificationd
 Summary: Chromium OS Notification Bridge
@@ -234,7 +244,9 @@ mkdir -p %{buildroot}%{_userunitdir}/sommelier@1.service.d
 mkdir -p %{buildroot}%{_userunitdir}/sommelier-x@0.service.d
 mkdir -p %{buildroot}%{_userunitdir}/sommelier-x@1.service.d
 mkdir -p %{buildroot}%{_sysconfdir}/sudoers.d
+mkdir -p %{buildroot}%{_sysconfdir}/fonts/conf.d
 mkdir -p %{buildroot}/var/lib/polkit-1/localauthority/10-vendor.d
+mkdir -p %{buildroot}/usr/share/ansible/plugins/callback
 
 ln -sf /opt/google/cros-containers/bin/sommelier %{buildroot}%{_bindir}/sommelier
 
@@ -242,6 +254,8 @@ ln -sf /opt/google/cros-containers/bin/sommelier %{buildroot}%{_bindir}/sommelie
 ln -sf /opt/google/cros-containers/cros-adapta %{buildroot}%{_datarootdir}/themes/CrosAdapta
 %endif
 
+install -m 644 cros-host-fonts/05-cros-fonts.conf %{buildroot}%{_sysconfdir}/fonts/conf.d/05-cros-fonts.conf
+install -m 644 cros-garcon/third_party/garcon.py %{buildroot}/usr/share/ansible/plugins/callback/garcon.py
 install -m 440 cros-sudo-config/10-cros-nopasswd %{buildroot}%{_sysconfdir}/sudoers.d/10-cros-nopasswd
 install -m 440 cros-sudo-config/10-cros-nopasswd.pkla %{buildroot}/var/lib/polkit-1/localauthority/10-vendor.d/10-cros-nopasswd.pkla
 install -m 644 cros-sommelier/sommelierrc  %{buildroot}%{_sysconfdir}/sommelierrc
@@ -294,9 +308,15 @@ echo "fi" >> %{buildroot}%{_sysconfdir}/profile.d/sommelier.sh
 %{_bindir}/garcon-terminal-handler
 %{_bindir}/garcon-url-handler
 %{_datarootdir}/applications/garcon_host_browser.desktop
-%config(noreplace) %{_sysconfdir}/skel/.config/cros-garcon.conf
+%{_sysconfdir}/skel/.config/cros-garcon.conf
 %{_userunitdir}/cros-garcon.service
 %{_userunitdir}/cros-garcon.service.d
+/usr/share/ansible/plugins/callback/garcon.py
+%license LICENSE
+%doc README.md
+
+%files -n cros-host-fonts
+%{_sysconfdir}/fonts/conf.d/05-cros-fonts.conf
 %license LICENSE
 %doc README.md
 
@@ -358,6 +378,9 @@ echo "fi" >> %{buildroot}%{_sysconfdir}/profile.d/sommelier.sh
 %doc README.md
 
 %changelog
+* Tue Dec 17 2019 Jason Montleon jmontleo@redhat.com 1.0-0.24.20200115git88d1189
+- Update to master 88d1189
+
 * Tue Dec 17 2019 Jason Montleon jmontleo@redhat.com 1.0-0.23.20191217gitce9fd9f
 - Update to master ce9fd9f
 
