@@ -1,9 +1,9 @@
-%global hash 88d1189
-%global snapshotdate 20200115
+%global hash 41d4d31
+%global snapshotdate 20200203
 
 Name: cros-guest-tools		
 Version: 1.0
-Release: 0.24.%{snapshotdate}git%{hash}%{?dist}
+Release: 0.26.%{snapshotdate}git%{hash}%{?dist}
 Summary: Chromium OS integration meta package
 
 License: BSD	
@@ -19,6 +19,7 @@ Recommends: file
 Recommends: fuse
 Recommends: git
 Recommends: gnupg
+Recommends: iptables
 Recommends: iputils
 Recommends: less
 Recommends: libXScrnSaver
@@ -378,6 +379,12 @@ echo "fi" >> %{buildroot}%{_sysconfdir}/profile.d/sommelier.sh
 %doc README.md
 
 %changelog
+* Mon Feb 03 2020 Fedora Release Engineering <releng@fedoraproject.org> - 1.0-0.26.20200203git41d4d31
+- Update to master 41d4d31
+
+* Tue Jan 28 2020 Fedora Release Engineering <releng@fedoraproject.org> - 1.0-0.25.20200115git88d1189
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild
+
 * Tue Dec 17 2019 Jason Montleon jmontleo@redhat.com 1.0-0.24.20200115git88d1189
 - Update to master 88d1189
 
