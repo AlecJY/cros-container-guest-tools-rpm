@@ -1,9 +1,9 @@
-%global hash 28f04a1
-%global snapshotdate 20200219
+%global hash 1d204a4
+%global snapshotdate 20200313
 
 Name: cros-guest-tools		
 Version: 1.0
-Release: 0.27.%{snapshotdate}git%{hash}%{?dist}
+Release: 0.29.%{snapshotdate}git%{hash}%{?dist}
 Summary: Chromium OS integration meta package
 
 License: BSD	
@@ -261,6 +261,7 @@ install -m 440 cros-sudo-config/10-cros-nopasswd %{buildroot}%{_sysconfdir}/sudo
 install -m 440 cros-sudo-config/10-cros-nopasswd.pkla %{buildroot}/var/lib/polkit-1/localauthority/10-vendor.d/10-cros-nopasswd.pkla
 install -m 644 cros-sommelier/sommelierrc  %{buildroot}%{_sysconfdir}/sommelierrc
 install -m 644 cros-sommelier/sommelier.sh %{buildroot}%{_sysconfdir}/profile.d/sommelier.sh
+install -m 644 cros-sommelier/skel.sommelierrc %{buildroot}%{_sysconfdir}/skel/.sommelierrc
 install -m 644 cros-garcon/skel.cros-garcon.conf %{buildroot}%{_sysconfdir}/skel/.config/cros-garcon.conf
 install -m 644 cros-wayland/skel.weston.ini %{buildroot}%{_sysconfdir}/skel/.config/weston.ini
 install -m 644 cros-wayland/10-cros-virtwl.rules %{buildroot}%{_udevrulesdir}/10-cros-virtwl.rules
@@ -348,6 +349,7 @@ echo "fi" >> %{buildroot}%{_sysconfdir}/profile.d/sommelier.sh
 
 %files -n cros-sommelier
 %{_bindir}/sommelier
+%{_sysconfdir}/skel/.sommelierrc
 %config(noreplace) %{_sysconfdir}/sommelierrc
 %config(noreplace) %{_sysconfdir}/profile.d/sommelier.sh
 %{_userunitdir}/sommelier@.service
@@ -379,7 +381,13 @@ echo "fi" >> %{buildroot}%{_sysconfdir}/profile.d/sommelier.sh
 %doc README.md
 
 %changelog
-* Wed Feb 19 2020 Jason Montleon jmontleo@redhat.com 1.0-0.27.20200219git28f04a1
+* Fri Mar 13 2020 Jason Montleon jmontleo@redhat.com - 1.0-0.29.20200313git1d204a4
+- Update to master 1d204a4
+
+* Wed Mar 04 2020 Jason Montleon jmontleo@redhat.com - 1.0-0.28.20200304gitd2e19d8
+- Update to master d2e19d8
+
+* Wed Feb 19 2020 Jason Montleon jmontleo@redhat.com - 1.0-0.27.20200219git28f04a1
 - Update to master 28f04a1
 
 * Mon Feb 03 2020 Fedora Release Engineering <releng@fedoraproject.org> - 1.0-0.26.20200203git41d4d31
