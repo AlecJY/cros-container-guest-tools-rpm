@@ -1,9 +1,9 @@
-%global hash 1d204a4
-%global snapshotdate 20200313
+%global hash 61d9c12
+%global snapshotdate 20200330
 
 Name: cros-guest-tools		
 Version: 1.0
-Release: 0.29.%{snapshotdate}git%{hash}%{?dist}
+Release: 0.30.%{snapshotdate}git%{hash}%{?dist}
 Summary: Chromium OS integration meta package
 
 License: BSD	
@@ -24,6 +24,7 @@ Recommends: iputils
 Recommends: less
 Recommends: libXScrnSaver
 Recommends: mesa-dri-drivers
+Recommends: udev
 Recommends: usbutils
 Recommends: vim-enhanced
 Recommends: wget
@@ -381,6 +382,9 @@ echo "fi" >> %{buildroot}%{_sysconfdir}/profile.d/sommelier.sh
 %doc README.md
 
 %changelog
+* Fri Mar 13 2020 Jason Montleon jmontleo@redhat.com - 1.0-0.30.20200330git61d9c12
+- Update to master 61d9c12
+
 * Fri Mar 13 2020 Jason Montleon jmontleo@redhat.com - 1.0-0.29.20200313git1d204a4
 - Update to master 1d204a4
 
