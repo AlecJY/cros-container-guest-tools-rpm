@@ -1,9 +1,9 @@
-%global hash 6968d7b
-%global snapshotdate 20200427
+%global hash fce526e
+%global snapshotdate 20200509
 
 Name: cros-guest-tools		
 Version: 1.0
-Release: 0.31.%{snapshotdate}git%{hash}%{?dist}
+Release: 0.32.%{snapshotdate}git%{hash}%{?dist}
 Summary: Chromium OS integration meta package
 
 License: BSD	
@@ -246,6 +246,8 @@ mkdir -p %{buildroot}%{_userunitdir}/sommelier@0.service.d
 mkdir -p %{buildroot}%{_userunitdir}/sommelier@1.service.d
 mkdir -p %{buildroot}%{_userunitdir}/sommelier-x@0.service.d
 mkdir -p %{buildroot}%{_userunitdir}/sommelier-x@1.service.d
+mkdir -p %{buildroot}%{_userunitdir}/pulseaudio.service.wants
+mkdir -p %{buildroot}%{_userunitdir}/default.target.wants
 mkdir -p %{buildroot}%{_sysconfdir}/sudoers.d
 mkdir -p %{buildroot}%{_sysconfdir}/fonts/conf.d
 mkdir -p %{buildroot}/var/lib/polkit-1/localauthority/10-vendor.d
@@ -277,6 +279,8 @@ install -m 644 cros-ui-config/01-cros-ui %{buildroot}%{_sysconfdir}/dconf/db/loc
 
 install -m 644 cros-garcon/cros-garcon.service %{buildroot}%{_userunitdir}/cros-garcon.service
 install -m 644 cros-pulse-config/cros-pulse-config.service %{buildroot}%{_userunitdir}/cros-pulse-config.service
+ln -sf %{_userunitdir}/cros-pulse-config.service %{buildroot}%{_userunitdir}/pulseaudio.service.wants/cros-pulse-config.service
+ln -sf %{_userunitdir}/cros-pulse-config.service %{buildroot}%{_userunitdir}/default.target.wants/cros-pulse-config.service
 install -m 644 cros-sommelier/sommelier@.service %{buildroot}%{_userunitdir}/sommelier@.service
 install -m 644 cros-sommelier/sommelier-x@.service %{buildroot}%{_userunitdir}/sommelier-x@.service
 install -m 644 cros-sftp/cros-sftp.service %{buildroot}%{_unitdir}/cros-sftp.service
@@ -341,6 +345,9 @@ echo "fi" >> %{buildroot}%{_sysconfdir}/profile.d/sommelier.sh
 
 %files -n cros-pulse-config
 %{_userunitdir}/cros-pulse-config.service
+%dir %{_userunitdir}/pulseaudio.service.wants
+%{_userunitdir}/default.target.wants/cros-pulse-config.service
+%{_userunitdir}/pulseaudio.service.wants/cros-pulse-config.service
 %license LICENSE
 %doc README.md
 
@@ -383,6 +390,9 @@ echo "fi" >> %{buildroot}%{_sysconfdir}/profile.d/sommelier.sh
 %doc README.md
 
 %changelog
+* Sat May 09 2020 Jason Montleon jmontleo@redhat.com - 1.0-0.32.20200509gitfce526e
+- Update to master fce526e
+
 * Mon Apr 27 2020 Jason Montleon jmontleo@redhat.com - 1.0-0.31.20200427git6968d7b
 - Update to master 6968d7b
 
