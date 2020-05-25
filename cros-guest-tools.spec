@@ -1,9 +1,9 @@
-%global hash fce526e
-%global snapshotdate 20200509
+%global hash c91e2b4
+%global snapshotdate 20200524
 
 Name: cros-guest-tools		
 Version: 1.0
-Release: 0.32.%{snapshotdate}git%{hash}%{?dist}
+Release: 0.33.%{snapshotdate}git%{hash}%{?dist}
 Summary: Chromium OS integration meta package
 
 License: BSD	
@@ -28,6 +28,7 @@ Recommends: udev
 Recommends: usbutils
 Recommends: vim-enhanced
 Recommends: wget
+Recommends: xdg-utils
 Recommends: xz
 %if 0%{?fedora}
 Requires: cros-adapta = %{version}-%{release}
@@ -390,6 +391,10 @@ echo "fi" >> %{buildroot}%{_sysconfdir}/profile.d/sommelier.sh
 %doc README.md
 
 %changelog
+* Sun May 24 2020 Jason Montleon jmontleo@redhat.com - 1.0-0.33.20200524gitc91e2b4
+- Update to master c91e2b4
+- Add xdg-utils to the recommended packages
+
 * Sat May 09 2020 Jason Montleon jmontleo@redhat.com - 1.0-0.32.20200509gitfce526e
 - Update to master fce526e
 
