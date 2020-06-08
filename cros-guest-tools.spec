@@ -1,9 +1,9 @@
-%global hash c91e2b4
-%global snapshotdate 20200524
+%global hash 0767a9f
+%global snapshotdate 20200608
 
 Name: cros-guest-tools		
 Version: 1.0
-Release: 0.33.%{snapshotdate}git%{hash}%{?dist}
+Release: 0.34.%{snapshotdate}git%{hash}%{?dist}
 Summary: Chromium OS integration meta package
 
 License: BSD	
@@ -118,21 +118,16 @@ BuildArch: noarch
 This package installs D-Bus on-demand service specification for notificationd.
 
 %package -n cros-pulse-config
-Summary: This package installs a helper systemd unit for PulseAudio support
+Summary: PulseAudio helper for Chromium OS integration.
 Requires: alsa-plugins-pulseaudio
 Requires: pulseaudio-utils
 BuildArch: noarch
 
 %description -n cros-pulse-config
-This package installs a helper systemd unit for PulseAudio support.
-This is required as a workaround for the lack of udev in unprivileged
-containers.
-
-%post -n cros-pulse-config
-%systemd_user_post cros-pulse-config.service
-
-%preun -n cros-pulse-config
-%systemd_user_preun cros-pulse-config.service
+This package installs customized pulseaudio configurations to /etc/skel.
+"default.pa" is required as a workaround for the lack of udev in
+unprivileged containers.
+"daemon.conf" contains low latency configuration.
 
 %package -n cros-sftp
 Summary: SFTP service files for CrOS integration
@@ -235,7 +230,7 @@ mkdir -p %{buildroot}%{_sysconfdir}/gtk-3.0
 mkdir -p %{buildroot}%{_sysconfdir}/polkit-1/localauthority/50-local.d
 mkdir -p %{buildroot}%{_sysconfdir}/xdg
 mkdir -p %{buildroot}%{_sysconfdir}/profile.d
-mkdir -p %{buildroot}%{_sysconfdir}/skel/.config
+mkdir -p %{buildroot}%{_sysconfdir}/skel/.config/pulse
 mkdir -p %{buildroot}%{_udevrulesdir}
 mkdir -p %{buildroot}%{_unitdir}
 mkdir -p %{buildroot}%{_userunitdir}
@@ -270,6 +265,8 @@ install -m 644 cros-sommelier/skel.sommelierrc %{buildroot}%{_sysconfdir}/skel/.
 install -m 644 cros-garcon/skel.cros-garcon.conf %{buildroot}%{_sysconfdir}/skel/.config/cros-garcon.conf
 install -m 644 cros-wayland/skel.weston.ini %{buildroot}%{_sysconfdir}/skel/.config/weston.ini
 install -m 644 cros-wayland/10-cros-virtwl.rules %{buildroot}%{_udevrulesdir}/10-cros-virtwl.rules
+install -m 644 cros-pulse-config/default.pa %{buildroot}%{_sysconfdir}/skel/.config/pulse/default.pa
+install -m 644 cros-pulse-config/daemon.conf %{buildroot}%{_sysconfdir}/skel/.config/pulse/daemon.conf
 install -m 755 cros-garcon/garcon-terminal-handler %{buildroot}%{_bindir}/garcon-terminal-handler
 install -m 755 cros-garcon/garcon-url-handler %{buildroot}%{_bindir}/garcon-url-handler
 install -m 644 cros-notificationd/org.freedesktop.Notifications.service %{buildroot}%{_datarootdir}/dbus-1/services/org.freedesktop.Notifications.service
@@ -279,9 +276,6 @@ install -m 644 cros-ui-config/Trolltech.conf %{buildroot}%{_sysconfdir}/xdg/Trol
 install -m 644 cros-ui-config/01-cros-ui %{buildroot}%{_sysconfdir}/dconf/db/local.d/01-cros-ui
 
 install -m 644 cros-garcon/cros-garcon.service %{buildroot}%{_userunitdir}/cros-garcon.service
-install -m 644 cros-pulse-config/cros-pulse-config.service %{buildroot}%{_userunitdir}/cros-pulse-config.service
-ln -sf %{_userunitdir}/cros-pulse-config.service %{buildroot}%{_userunitdir}/pulseaudio.service.wants/cros-pulse-config.service
-ln -sf %{_userunitdir}/cros-pulse-config.service %{buildroot}%{_userunitdir}/default.target.wants/cros-pulse-config.service
 install -m 644 cros-sommelier/sommelier@.service %{buildroot}%{_userunitdir}/sommelier@.service
 install -m 644 cros-sommelier/sommelier-x@.service %{buildroot}%{_userunitdir}/sommelier-x@.service
 install -m 644 cros-sftp/cros-sftp.service %{buildroot}%{_unitdir}/cros-sftp.service
@@ -345,10 +339,8 @@ echo "fi" >> %{buildroot}%{_sysconfdir}/profile.d/sommelier.sh
 %doc README.md
 
 %files -n cros-pulse-config
-%{_userunitdir}/cros-pulse-config.service
-%dir %{_userunitdir}/pulseaudio.service.wants
-%{_userunitdir}/default.target.wants/cros-pulse-config.service
-%{_userunitdir}/pulseaudio.service.wants/cros-pulse-config.service
+%{_sysconfdir}/skel/.config/pulse/daemon.conf
+%{_sysconfdir}/skel/.config/pulse/default.pa
 %license LICENSE
 %doc README.md
 
@@ -391,6 +383,10 @@ echo "fi" >> %{buildroot}%{_sysconfdir}/profile.d/sommelier.sh
 %doc README.md
 
 %changelog
+* Mon Jun 08 2020 Jason Montleon jmontleo@redhat.com - 1.0-0.34.20200608git0767a9f
+- Update to master 0767a9f
+- Removes cros-pulse-config service. Adds /etc/skel/.config/pulse config files
+
 * Sun May 24 2020 Jason Montleon jmontleo@redhat.com - 1.0-0.33.20200524gitc91e2b4
 - Update to master c91e2b4
 - Add xdg-utils to the recommended packages
