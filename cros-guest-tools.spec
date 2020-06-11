@@ -1,9 +1,9 @@
-%global hash 0767a9f
-%global snapshotdate 20200608
+%global hash 5ab8724
+%global snapshotdate 20200611
 
 Name: cros-guest-tools		
 Version: 1.0
-Release: 0.34.%{snapshotdate}git%{hash}%{?dist}
+Release: 0.35.%{snapshotdate}git%{hash}%{?dist}
 Summary: Chromium OS integration meta package
 
 License: BSD	
@@ -383,6 +383,9 @@ echo "fi" >> %{buildroot}%{_sysconfdir}/profile.d/sommelier.sh
 %doc README.md
 
 %changelog
+* Thu Jun 11 2020 Jason Montleon jmontleo@redhat.com - 1.0-0.35.20200611git5ab8724
+- Update to master 5ab8724
+
 * Mon Jun 08 2020 Jason Montleon jmontleo@redhat.com - 1.0-0.34.20200608git0767a9f
 - Update to master 0767a9f
 - Removes cros-pulse-config service. Adds /etc/skel/.config/pulse config files
