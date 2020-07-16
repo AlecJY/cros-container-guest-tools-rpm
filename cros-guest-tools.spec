@@ -1,9 +1,9 @@
-%global hash 5ab8724
-%global snapshotdate 20200611
+%global hash 74ea274
+%global snapshotdate 20200716
 
 Name: cros-guest-tools		
 Version: 1.0
-Release: 0.35.%{snapshotdate}git%{hash}%{?dist}
+Release: 0.36.%{snapshotdate}git%{hash}%{?dist}
 Summary: Chromium OS integration meta package
 
 License: BSD	
@@ -116,6 +116,12 @@ BuildArch: noarch
 
 %description -n cros-notificationd
 This package installs D-Bus on-demand service specification for notificationd.
+
+%post -n cros-notificationd
+%systemd_user_post cros-notificationd.service
+
+%preun -n cros-notificationd
+%systemd_user_preun cros-notificationd.service
 
 %package -n cros-pulse-config
 Summary: PulseAudio helper for Chromium OS integration.
@@ -284,6 +290,7 @@ install -m 644 cros-sommelier-config/cros-sommelier-override.conf %{buildroot}%{
 install -m 644 cros-sommelier-config/cros-sommelier-x-override.conf %{buildroot}%{_userunitdir}/sommelier-x@0.service.d/cros-sommelier-x-override.conf
 install -m 644 cros-sommelier-config/cros-sommelier-low-density-override.conf %{buildroot}%{_userunitdir}/sommelier@1.service.d/cros-sommelier-low-density-override.conf
 install -m 644 cros-sommelier-config/cros-sommelier-low-density-override.conf %{buildroot}%{_userunitdir}/sommelier-x@1.service.d/cros-sommelier-low-density-override.conf
+install -m 644 cros-notificationd/cros-notificationd.service %{buildroot}%{_userunitdir}/cros-notificationd.service
 
 sed -i 's/OnlyShowIn=Never/OnlyShowIn=X-Never/g' cros-garcon/garcon_host_browser.desktop
 desktop-file-install --dir=%{buildroot}%{_datadir}/applications cros-garcon/garcon_host_browser.desktop
@@ -325,6 +332,7 @@ echo "fi" >> %{buildroot}%{_sysconfdir}/profile.d/sommelier.sh
 
 %files -n cros-notificationd
 %{_datarootdir}/dbus-1/services/org.freedesktop.Notifications.service
+%{_userunitdir}/cros-notificationd.service
 %license LICENSE
 %doc README.md
 
@@ -383,6 +391,9 @@ echo "fi" >> %{buildroot}%{_sysconfdir}/profile.d/sommelier.sh
 %doc README.md
 
 %changelog
+* Thu Jul 16 2020 Jason Montleon jmontleo@redhat.com - 1.0-0.36.20200716git74ea274
+- Update to master 74ea274
+
 * Thu Jun 11 2020 Jason Montleon jmontleo@redhat.com - 1.0-0.35.20200611git5ab8724
 - Update to master 5ab8724
 
