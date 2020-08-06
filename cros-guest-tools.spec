@@ -408,7 +408,6 @@ echo "fi" >> %{buildroot}%{_sysconfdir}/profile.d/sommelier.sh
 %doc README.md
 
 %changelog
-<<<<<<< HEAD
 * Thu Aug 06 2020 Jason Montleon jmontleo@redhat.com - 1.0-0.38.20200806git19eab9e
 - Update to master 19eab9e
 
