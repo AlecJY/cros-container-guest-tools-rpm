@@ -204,11 +204,27 @@ configuration for sudo to allow passwordless sudo access for the sudo group,
 and passwordless pkexec for the sudo group.
 
 %package -n cros-ui-config
+%define branding_name cros
+%define gtk2_real_package %(rpm -q --qf '%%{name}' --whatprovides gtk2)
+%define gtk2_version %(rpm -q --qf '%%{version}' %{gtk2_real_package})
+%define gtk3_real_package %(rpm -q --qf '%%{name}' --whatprovides gtk3)
+%define gtk3_version %(rpm -q --qf '%%{version}' %{gtk3_real_package})
 Summary: UI integration for Chromium OS
 BuildRequires: dconf
-BuildRequires: libgtk-2_0-0
+BuildRequires: gtk2
+BuildRequires: gtk3
 Requires: cros-adapta
 Requires: dconf
+Requires: %{gtk2_real_package} = %{gtk2_version}
+Requires: %{gtk3_real_package} = %{gtk3_version}
+Requires: gtk2-metatheme-adwaita
+Requires: gtk3-metatheme-adwaita
+Provides: gtk2-branding = %{gtk2_version}
+Provides: gtk3-branding = %{gtk3_version}
+Conflicts: gtk2-branding
+Conflicts: gtk3-branding
+Supplements: packageand(gtk2:branding-%{branding_name})
+Supplements: packageand(gtk3:branding-%{branding_name})
 BuildArch: noarch
 
 %description -n cros-ui-config
