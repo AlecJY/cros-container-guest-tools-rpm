@@ -63,10 +63,12 @@ This package overrides the default behavior of some core systemd units.
 
 %post -n cros-systemd-overrides
 systemctl mask systemd-journald-audit.socket
+systemctl mask auditd.service
 
 %postun -n cros-systemd-overrides
 if [ $1 -eq 0 ] ; then
 systemctl unmask systemd-journald-audit.socket
+systemctl unmask auditd.service
 fi
 
 %package -n cros-logging
