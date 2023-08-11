@@ -179,9 +179,15 @@ BuildArch: noarch
 %systemd_user_post sommelier@.service
 %systemd_user_post sommelier-x@.service
 
+systemctl mask display-manager.service
+
 %preun -n cros-sommelier
 %systemd_user_preun sommelier@.service
 %systemd_user_preun sommelier-x@.service
+
+if [ $1 -eq 0 ] ; then
+systemctl unmask display-manager.service
+fi
 
 %package -n cros-sommelier-config
 Summary: Sommelier config for Chromium OS integration
