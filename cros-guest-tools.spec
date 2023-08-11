@@ -1,50 +1,52 @@
-%global hash 19eab9e
-%global snapshotdate 20200806
+%global hash c2d2d80
+%global snapshotdate 20230811
 
 Name: cros-guest-tools		
 Version: 1.0
-Release: 0.39.%{snapshotdate}git%{hash}%{?dist}
+Release: 0.40.%{snapshotdate}git%{hash}%{?dist}
 Summary: Chromium OS integration meta package
 
 License: BSD	
 URL: https://chromium.googlesource.com/chromiumos/containers/cros-container-guest-tools/
 Source0: https://chromium.googlesource.com/chromiumos/containers/cros-container-guest-tools/+archive/%{hash}.tar.gz#/%{name}-%{hash}.tar.gz
+Patch0: disable-auto-update.patch
+Patch1: fix-paths.patch
+Patch2: fix-desktop-file.patch
 BuildArch: noarch
+BuildRequires: desktop-file-utils
 BuildRequires: systemd
 Recommends: bash-completion
 Recommends: bzip2
 Recommends: curl
 Recommends: dbus-x11
 Recommends: file
-Recommends: fuse
+Recommends: fuse3
 Recommends: git
 Recommends: gnupg
-Recommends: iptables
 Recommends: iputils
+Recommends: iptables
 Recommends: less
-Recommends: libXScrnSaver
-Recommends: mesa-dri-drivers
+Recommends: libXss1
+Recommends: man
 Recommends: udev
+Recommends: unzip
 Recommends: usbutils
-Recommends: vim-enhanced
+Recommends: vim
 Recommends: wget
-Recommends: xdg-utils
 Recommends: xz
-%if 0%{?fedora}
-Requires: cros-adapta = %{version}-%{release}
-%endif
-Requires: cros-logging = %{version}-%{release}
 Requires: cros-garcon = %{version}-%{release}
 Requires: cros-host-fonts = %{version}-%{release}
 Requires: cros-notificationd = %{version}-%{release}
-Requires: cros-pulse-config = %{version}-%{release}
-Requires: cros-sftp = %{version}-%{release}
 Requires: cros-sommelier = %{version}-%{release}
-Requires: cros-sommelier-config = %{version}-%{release}
-Requires: cros-sudo-config = %{version}-%{release}
-Requires: cros-systemd-overrides = %{version}-%{release}
 Requires: cros-ui-config = %{version}-%{release}
-Requires: cros-wayland = %{version}-%{release}
+Requires: cros-sftp = %{version}-%{release}
+Recommends: cros-logging = %{version}-%{release}
+Recommends: cros-sommelier-config = %{version}-%{release}
+Recommends: cros-sudo-config = %{version}-%{release}
+Recommends: cros-systemd-overrides = %{version}-%{release}
+Recommends: cros-vmstat-metrics = %{version}-%{release}
+Recommends: cros-wayland = %{version}-%{release}
+Recommends: cros-pulse-config = %{version}-%{release}
 
 %description
 This package has dependencies on all other packages necessary for Chromium OS
@@ -77,28 +79,27 @@ This package installs configuration for logging integration
 with Chrome OS so e.g. filing feedback reports can collect
 error logs from within the container.
 
-%if 0%{?fedora}
 %package -n cros-adapta
 Summary: Chromium OS GTK Theme
-Requires: filesystem
+Requires: gtk2-engines
+Requires: gtk2-engine-murrine
 Requires: gtk2
 Requires: gtk3
-Requires: gtk-murrine-engine
-Requires: gtk2-engines
-Requires: qt5-qtstyleplugins
+Requires: libqt5-qtbase-platformtheme-gtk3
+Requires: libqt5-qtstyleplugins-platformtheme-gtk2
 BuildArch: noarch
 
 %description -n cros-adapta
 This package provides symlinks which link the bind-mounted theme into the
 correct location in the container.
-%endif
 
 %package -n cros-garcon
 Summary: Chromium OS Garcon Bridge
-BuildRequires: desktop-file-utils
+BuildRequires: ansible
+Requires: desktop-file-utils
 Requires: PackageKit
+Requires: xdg-utils
 Requires: ansible
-Requires: mailcap
 Requires: systemd
 BuildArch: noarch
 
@@ -113,16 +114,21 @@ Chromium OS.
 %systemd_user_preun cros-garcon.service
 
 %package -n cros-host-fonts
-Requires: fontpackages-filesystem
 Summary: Chromium OS Host Fonts Configuration
 
 %description -n cros-host-fonts
 Share fonts from Chromium OS. This package provides a config file to search
 for the shared Chromium OS font directory.
 
+%post -n cros-host-fonts
+%systemd_post usr-share-fonts-chromeos.mount
+
+%preun -n cros-host-fonts
+%systemd_preun usr-share-fonts-chromeos.mount
+
 %package -n cros-notificationd
 Summary: Chromium OS Notification Bridge
-Requires: dbus-common
+Requires: dbus-1
 BuildArch: noarch
 
 %description -n cros-notificationd
@@ -136,7 +142,7 @@ This package installs D-Bus on-demand service specification for notificationd.
 
 %package -n cros-pulse-config
 Summary: PulseAudio helper for Chromium OS integration.
-Requires: alsa-plugins-pulseaudio
+Requires: pulseaudio
 Requires: pulseaudio-utils
 BuildArch: noarch
 
@@ -147,41 +153,23 @@ unprivileged containers.
 "daemon.conf" contains low latency configuration.
 
 %package -n cros-sftp
-Summary: SFTP service files for CrOS integration
+Summary: SFTP link for CrOS integration
 Requires(post): openssh-server
 BuildArch: noarch
 
 %description -n cros-sftp
-This package installs unit-files and support scripts for enabling SFTP
-integration with Chromium OS.
-
-%post -n cros-sftp
-%systemd_post cros-sftp.service
-
-%preun -n cros-sftp
-%systemd_preun cros-sftp.service
+This package create a link of sftp-server for enabling SFTP integration with
+Chromium OS.
 
 %package -n cros-sommelier
 Summary: This package installs unit-files and support scripts for sommelier
-Requires: gtk2
-Requires: xorg-x11-fonts-100dpi
-Requires: xorg-x11-fonts-75dpi
-Requires: xorg-x11-fonts-cyrillic
-Requires: xorg-x11-fonts-ISO8859-1-100dpi
-Requires: xorg-x11-fonts-ISO8859-14-100dpi
-Requires: xorg-x11-fonts-ISO8859-14-75dpi
-Requires: xorg-x11-fonts-ISO8859-15-100dpi
-Requires: xorg-x11-fonts-ISO8859-15-75dpi
-Requires: xorg-x11-fonts-ISO8859-1-75dpi
-Requires: xorg-x11-fonts-ISO8859-2-100dpi
-Requires: xorg-x11-fonts-ISO8859-2-75dpi
-Requires: xorg-x11-fonts-ISO8859-9-100dpi
-Requires: xorg-x11-fonts-ISO8859-9-75dpi
-Requires: xorg-x11-fonts-misc
-Requires: xorg-x11-fonts-Type1
-Requires: xorg-x11-utils
-Requires: xorg-x11-xauth
-Requires: vim-common
+Requires: bash
+Requires: xorg-x11
+Requires: vim
+Recommends: xorg-x11-server
+Recommends: xauth
+Recommends: xorg-x11-fonts
+Recommends: xkeyboard-config
 BuildArch: noarch
 
 %description -n cros-sommelier
@@ -206,6 +194,7 @@ integration with Chromium OS.
 
 %package -n cros-sudo-config
 Summary: sudo config for Chromium OS integration.
+BuildRequires: sudo
 Requires: sudo
 BuildArch: noarch
 
@@ -216,9 +205,10 @@ and passwordless pkexec for the sudo group.
 
 %package -n cros-ui-config
 Summary: UI integration for Chromium OS
+BuildRequires: dconf
+BuildRequires: libgtk-2_0-0
+Requires: cros-adapta
 Requires: dconf
-Requires: gtk2
-Requires: gtk3
 BuildArch: noarch
 
 %description -n cros-ui-config
@@ -227,7 +217,6 @@ integration with Chromium OS.
 
 %package -n cros-wayland
 Summary: Wayland extras for virtwl in Chromium OS
-Requires: systemd-udev
 BuildArch: noarch
 
 %description -n cros-wayland
@@ -236,6 +225,10 @@ experience under CrOS.
 
 %prep
 %setup -q -c
+
+%patch0 -p1
+%patch1 -p1
+%patch2 -p1
 
 %build
 
@@ -255,7 +248,6 @@ mkdir -p %{buildroot}%{_userunitdir}
 mkdir -p %{buildroot}%{_datarootdir}/applications
 mkdir -p %{buildroot}%{_datarootdir}/dbus-1/services
 mkdir -p %{buildroot}%{_datarootdir}/themes
-mkdir -p %{buildroot}%{_userunitdir}/cros-garcon.service.d
 mkdir -p %{buildroot}%{_userunitdir}/sommelier@0.service.d
 mkdir -p %{buildroot}%{_userunitdir}/sommelier@1.service.d
 mkdir -p %{buildroot}%{_userunitdir}/sommelier-x@0.service.d
@@ -266,14 +258,13 @@ mkdir -p %{buildroot}%{_sysconfdir}/sudoers.d
 mkdir -p %{buildroot}%{_sysconfdir}/fonts/conf.d
 mkdir -p %{buildroot}/var/lib/polkit-1/localauthority/10-vendor.d
 mkdir -p %{buildroot}/usr/share/ansible/plugins/callback
+mkdir -p %{buildroot}/usr/lib/openssh
 
+export NO_BRP_STALE_LINK_ERROR=yes
 ln -sf /opt/google/cros-containers/bin/sommelier %{buildroot}%{_bindir}/sommelier
-
-%if 0%{?fedora}
 ln -sf /opt/google/cros-containers/cros-adapta %{buildroot}%{_datarootdir}/themes/CrosAdapta
-%endif
+ln -sf /usr/lib/ssh/sftp-server %{buildroot}/usr/lib/openssh/sftp-server
 
-install -m 644 cros-host-fonts/05-cros-fonts.conf %{buildroot}%{_sysconfdir}/fonts/conf.d/05-cros-fonts.conf
 install -m 644 cros-garcon/third_party/garcon.py %{buildroot}/usr/share/ansible/plugins/callback/garcon.py
 install -m 440 cros-sudo-config/10-cros-nopasswd %{buildroot}%{_sysconfdir}/sudoers.d/10-cros-nopasswd
 install -m 440 cros-sudo-config/10-cros-nopasswd.pkla %{buildroot}/var/lib/polkit-1/localauthority/10-vendor.d/10-cros-nopasswd.pkla
@@ -293,38 +284,27 @@ install -m 644 cros-ui-config/settings.ini %{buildroot}%{_sysconfdir}/gtk-3.0/se
 install -m 644 cros-ui-config/Trolltech.conf %{buildroot}%{_sysconfdir}/xdg/Trolltech.conf
 install -m 644 cros-ui-config/01-cros-ui %{buildroot}%{_sysconfdir}/dconf/db/local.d/01-cros-ui
 
+install -m 644 cros-host-fonts/usr-share-fonts-chromeos.mount %{buildroot}%{_unitdir}/usr-share-fonts-chromeos.mount
 install -m 644 cros-garcon/cros-garcon.service %{buildroot}%{_userunitdir}/cros-garcon.service
 install -m 644 cros-sommelier/sommelier@.service %{buildroot}%{_userunitdir}/sommelier@.service
 install -m 644 cros-sommelier/sommelier-x@.service %{buildroot}%{_userunitdir}/sommelier-x@.service
-install -m 644 cros-sftp/cros-sftp.service %{buildroot}%{_unitdir}/cros-sftp.service
-install -m 644 cros-garcon/cros-garcon-override.conf %{buildroot}%{_userunitdir}/cros-garcon.service.d/cros-garcon-override.conf
 install -m 644 cros-sommelier-config/cros-sommelier-override.conf %{buildroot}%{_userunitdir}/sommelier@0.service.d/cros-sommelier-override.conf
 install -m 644 cros-sommelier-config/cros-sommelier-x-override.conf %{buildroot}%{_userunitdir}/sommelier-x@0.service.d/cros-sommelier-x-override.conf
 install -m 644 cros-sommelier-config/cros-sommelier-low-density-override.conf %{buildroot}%{_userunitdir}/sommelier@1.service.d/cros-sommelier-low-density-override.conf
 install -m 644 cros-sommelier-config/cros-sommelier-low-density-override.conf %{buildroot}%{_userunitdir}/sommelier-x@1.service.d/cros-sommelier-low-density-override.conf
 install -m 644 cros-notificationd/cros-notificationd.service %{buildroot}%{_userunitdir}/cros-notificationd.service
 install -m 644 cros-logging/00-create-logs-dir.conf %{buildroot}%{_sysconfdir}/tmpfiles.d/00-create-logs-dir.conf
-sed -i 's/OnlyShowIn=Never/OnlyShowIn=X-Never/g' cros-garcon/garcon_host_browser.desktop
 desktop-file-install --dir=%{buildroot}%{_datadir}/applications cros-garcon/garcon_host_browser.desktop
-
-sed -i -e '13,20d' %{buildroot}%{_userunitdir}/sommelier-x@.service
-sed -i '13iEnvironment="SOMMELIER_XFONT_PATH=/usr/share/X11/fonts/misc,/usr/share/X11/fonts/cyrillic,/usr/share/X11/fonts/100dpi/:unscaled,/usr/share/X11/fonts/75dpi/:unscaled,/usr/share/X11/fonts/Type1,/usr/share/X11/fonts/100dpi,/usr/share/X11/fonts/75dpi,built-ins"\nEnvironment="LIBGL_DRIVERS_PATH=/opt/google/cros-containers/lib/"' %{buildroot}%{_userunitdir}/sommelier-x@.service
-sed -i 's/false/true/g' %{buildroot}%{_sysconfdir}/skel/.config/cros-garcon.conf
-sed -i '1i if [ "$UID" -ne "0" ]; then' %{buildroot}%{_sysconfdir}/profile.d/sommelier.sh
-sed -i '1i export XDG_RUNTIME_DIR=/run/user/$UID' %{buildroot}%{_sysconfdir}/profile.d/sommelier.sh
-echo "fi" >> %{buildroot}%{_sysconfdir}/profile.d/sommelier.sh
 
 %files
 %dir %{_sysconfdir}/skel/.config
 %license LICENSE
 %doc README.md
 
-%if 0%{?fedora}
 %files -n cros-adapta
 %{_datarootdir}/themes/CrosAdapta
 %license LICENSE
 %doc README.md
-%endif
 
 %files -n cros-logging
 %license LICENSE
@@ -337,13 +317,12 @@ echo "fi" >> %{buildroot}%{_sysconfdir}/profile.d/sommelier.sh
 %{_datarootdir}/applications/garcon_host_browser.desktop
 %{_sysconfdir}/skel/.config/cros-garcon.conf
 %{_userunitdir}/cros-garcon.service
-%{_userunitdir}/cros-garcon.service.d
 /usr/share/ansible/plugins/callback/garcon.py
 %license LICENSE
 %doc README.md
 
 %files -n cros-host-fonts
-%{_sysconfdir}/fonts/conf.d/05-cros-fonts.conf
+%{_unitdir}/usr-share-fonts-chromeos.mount
 %license LICENSE
 %doc README.md
 
@@ -354,6 +333,9 @@ echo "fi" >> %{buildroot}%{_sysconfdir}/profile.d/sommelier.sh
 %doc README.md
 
 %files -n cros-sudo-config
+%dir /var/lib/polkit-1
+%dir /var/lib/polkit-1/localauthority
+%dir /var/lib/polkit-1/localauthority/10-vendor.d
 %config(noreplace) %{_sysconfdir}/sudoers.d/10-cros-nopasswd
 /var/lib/polkit-1/localauthority/10-vendor.d/10-cros-nopasswd.pkla
 %license LICENSE
@@ -364,13 +346,15 @@ echo "fi" >> %{buildroot}%{_sysconfdir}/profile.d/sommelier.sh
 %doc README.md
 
 %files -n cros-pulse-config
+%dir %{_sysconfdir}/skel/.config/pulse
 %{_sysconfdir}/skel/.config/pulse/daemon.conf
 %{_sysconfdir}/skel/.config/pulse/default.pa
 %license LICENSE
 %doc README.md
 
 %files -n cros-sftp
-%{_unitdir}/cros-sftp.service
+%dir /usr/lib/openssh
+/usr/lib/openssh/sftp-server
 %license LICENSE
 %doc README.md
 
@@ -393,6 +377,7 @@ echo "fi" >> %{buildroot}%{_sysconfdir}/profile.d/sommelier.sh
 %doc README.md
 
 %files -n cros-ui-config
+%dir /etc/dconf/db/local.d
 %config(noreplace) %{_sysconfdir}/gtk-2.0/gtkrc
 %{_sysconfdir}/gtk-3.0
 %config(noreplace) %{_sysconfdir}/gtk-3.0/settings.ini

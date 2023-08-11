@@ -1,0 +1,24 @@
+From 21d7d97392e6c6bd1c0a41075ff9a614b9d6e8dc Mon Sep 17 00:00:00 2001
+From: Alec Su <ae40515@yahoo.com.tw>
+Date: Fri, 11 Aug 2023 10:58:23 +0000
+Subject: [PATCH] Disable auto updates
+
+---
+ cros-garcon/skel.cros-garcon.conf | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/cros-garcon/skel.cros-garcon.conf b/cros-garcon/skel.cros-garcon.conf
+index ce0e38e..375807f 100644
+--- a/cros-garcon/skel.cros-garcon.conf
++++ b/cros-garcon/skel.cros-garcon.conf
+@@ -3,8 +3,8 @@
+ 
+ # Disables regularly checking for updates and installing them for the Google
+ # provided 'cros' packages if set to true.
+-DisableAutomaticCrosPackageUpdates=false
++DisableAutomaticCrosPackageUpdates=true
+ 
+ # Disables regularly checking for security updates for installed packages and
+ # installing them if set to true.
+-DisableAutomaticSecurityUpdates=false
++DisableAutomaticSecurityUpdates=true

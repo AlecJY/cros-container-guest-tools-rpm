@@ -1,0 +1,21 @@
+From 3e4122a3152ee109ee3f65a86a40789a3e755601 Mon Sep 17 00:00:00 2001
+From: Alec Su <ae40515@yahoo.com.tw>
+Date: Fri, 11 Aug 2023 11:42:54 +0000
+Subject: [PATCH] Fix a value garcon_host_browser.desktop
+
+Because desktop-file-install requires an unregistered value starting
+with "X-". Therefore, replace Never in "OnlyShowIn" to X-Never.
+---
+ cros-garcon/garcon_host_browser.desktop | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/cros-garcon/garcon_host_browser.desktop b/cros-garcon/garcon_host_browser.desktop
+index 28c48e9..c8a14dc 100644
+--- a/cros-garcon/garcon_host_browser.desktop
++++ b/cros-garcon/garcon_host_browser.desktop
+@@ -4,4 +4,4 @@ Exec=/opt/google/cros-containers/bin/garcon --client --url %U
+ MimeType=x-scheme-handler/http;x-scheme-handler/https;x-scheme-handler/ftp;x-scheme-handler/mailto;
+ Type=Application
+ NoDisplay=true
+-OnlyShowIn=Never
++OnlyShowIn=X-Never

@@ -1,0 +1,36 @@
+From e3b6054e66f06c2a972df631e2b7cad23a2718f9 Mon Sep 17 00:00:00 2001
+From: Alec Su <ae40515@yahoo.com.tw>
+Date: Fri, 11 Aug 2023 10:58:55 +0000
+Subject: [PATCH] Fix paths for OpenSUSE
+
+---
+ cros-sommelier/sommelier-x@.service | 15 ++++++++-------
+ 1 file changed, 8 insertions(+), 7 deletions(-)
+
+diff --git a/cros-sommelier/sommelier-x@.service b/cros-sommelier/sommelier-x@.service
+index bf98a65..87a31e0 100644
+--- a/cros-sommelier/sommelier-x@.service
++++ b/cros-sommelier/sommelier-x@.service
+@@ -10,14 +10,15 @@ Environment="SOMMELIER_SCALE=1.0"
+ # on Debian stretch. This is the value of the --with-default-font-path argument
+ # to the configure script.
+ # TODO(smbarber): Factor this out for different distros.
+-Environment="SOMMELIER_XFONT_PATH=/usr/share/fonts/X11/misc,\
+-/usr/share/fonts/X11/cyrillic,\
+-/usr/share/fonts/X11/100dpi/:unscaled,\
+-/usr/share/fonts/X11/75dpi/:unscaled,\
+-/usr/share/fonts/X11/Type1,\
+-/usr/share/fonts/X11/100dpi,\
+-/usr/share/fonts/X11/75dpi,\
++Environment="SOMMELIER_XFONT_PATH=/usr/share/fonts/misc,\
++/usr/share/fonts/cyrillic,\
++/usr/share/fonts/100dpi/:unscaled,\
++/usr/share/fonts/75dpi/:unscaled,\
++/usr/share/fonts/Type1,\
++/usr/share/fonts/100dpi,\
++/usr/share/fonts/75dpi,\
+ built-ins"
++Environment="LIBGL_DRIVERS_PATH=/opt/google/cros-containers/lib/"
+ Type=notify
+ # TODO(b/294167210): This is a workaround for Bruschetta, remove this
+ # when we have a better approach.
