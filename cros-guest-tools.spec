@@ -40,7 +40,6 @@ Requires: cros-host-fonts = %{version}-%{release}
 Requires: cros-notificationd = %{version}-%{release}
 Requires: cros-sommelier = %{version}-%{release}
 Requires: cros-ui-config = %{version}-%{release}
-Requires: cros-sftp = %{version}-%{release}
 Recommends: cros-logging = %{version}-%{release}
 Recommends: cros-sommelier-config = %{version}-%{release}
 Recommends: cros-sudo-config = %{version}-%{release}
@@ -107,6 +106,7 @@ Requires: PackageKit
 Requires: xdg-utils
 Requires: ansible
 Requires: systemd
+Requires: cros-sftp = %{version}-%{release}
 BuildArch: noarch
 
 %description -n cros-garcon
