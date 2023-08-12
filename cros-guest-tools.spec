@@ -293,9 +293,11 @@ mkdir -p %{buildroot}%{_sysconfdir}/tmpfiles.d
 mkdir -p %{buildroot}%{_udevrulesdir}
 mkdir -p %{buildroot}%{_unitdir}
 mkdir -p %{buildroot}%{_userunitdir}
+mkdir -p %{buildroot}%{_datarootdir}/ansible/plugins/callback
 mkdir -p %{buildroot}%{_datarootdir}/applications
 mkdir -p %{buildroot}%{_datarootdir}/dbus-1/services
 mkdir -p %{buildroot}%{_datarootdir}/themes
+mkdir -p %{buildroot}%{_datarootdir}/xdg-desktop-portal/portals
 mkdir -p %{buildroot}%{_userunitdir}/sommelier@0.service.d
 mkdir -p %{buildroot}%{_userunitdir}/sommelier@1.service.d
 mkdir -p %{buildroot}%{_userunitdir}/sommelier-x@0.service.d
@@ -304,9 +306,7 @@ mkdir -p %{buildroot}%{_userunitdir}/pulseaudio.service.wants
 mkdir -p %{buildroot}%{_userunitdir}/default.target.wants
 mkdir -p %{buildroot}%{_sysconfdir}/sudoers.d
 mkdir -p %{buildroot}%{_sysconfdir}/fonts/conf.d
-mkdir -p %{buildroot}/var/lib/polkit-1/localauthority/10-vendor.d
-mkdir -p %{buildroot}/usr/share/ansible/plugins/callback
-mkdir -p %{buildroot}/usr/share/xdg-desktop-portal/portals
+mkdir -p %{buildroot}%{_sharedstatedir}/polkit-1/localauthority/10-vendor.d
 mkdir -p %{buildroot}/usr/lib/openssh
 
 export NO_BRP_STALE_LINK_ERROR=yes
@@ -314,9 +314,9 @@ ln -sf /opt/google/cros-containers/bin/sommelier %{buildroot}%{_bindir}/sommelie
 ln -sf /opt/google/cros-containers/cros-adapta %{buildroot}%{_datarootdir}/themes/CrosAdapta
 ln -sf /usr/lib/ssh/sftp-server %{buildroot}/usr/lib/openssh/sftp-server
 
-install -m 644 cros-garcon/third_party/garcon.py %{buildroot}/usr/share/ansible/plugins/callback/garcon.py
+install -m 644 cros-garcon/third_party/garcon.py %{buildroot}%{_datarootdir}/ansible/plugins/callback/garcon.py
 install -m 440 cros-sudo-config/10-cros-nopasswd %{buildroot}%{_sysconfdir}/sudoers.d/10-cros-nopasswd
-install -m 440 cros-sudo-config/10-cros-nopasswd.pkla %{buildroot}/var/lib/polkit-1/localauthority/10-vendor.d/10-cros-nopasswd.pkla
+install -m 440 cros-sudo-config/10-cros-nopasswd.pkla %{buildroot}%{_sharedstatedir}/polkit-1/localauthority/10-vendor.d/10-cros-nopasswd.pkla
 install -m 644 cros-sommelier/sommelierrc  %{buildroot}%{_sysconfdir}/sommelierrc
 install -m 644 cros-sommelier/sommelier.sh %{buildroot}%{_sysconfdir}/profile.d/sommelier.sh
 install -m 644 cros-sommelier/skel.sommelierrc %{buildroot}%{_sysconfdir}/skel/.sommelierrc
@@ -344,7 +344,7 @@ install -m 644 cros-sommelier-config/cros-sommelier-low-density-override.conf %{
 install -m 644 cros-sommelier-config/cros-sommelier-low-density-override.conf %{buildroot}%{_userunitdir}/sommelier-x@1.service.d/cros-sommelier-low-density-override.conf
 install -m 644 cros-notificationd/cros-notificationd.service %{buildroot}%{_userunitdir}/cros-notificationd.service
 install -m 644 cros-logging/00-create-logs-dir.conf %{buildroot}%{_sysconfdir}/tmpfiles.d/00-create-logs-dir.conf
-install -m 644 cros-xdg-desktop-portal/cros.portal %{buildroot}/usr/share/xdg-desktop-portal/portals/cros.portal
+install -m 644 cros-xdg-desktop-portal/cros.portal %{buildroot}%{_datarootdir}/xdg-desktop-portal/portals/cros.portal
 desktop-file-install --dir=%{buildroot}%{_datadir}/applications cros-garcon/garcon_host_browser.desktop
 
 %files
@@ -365,10 +365,10 @@ desktop-file-install --dir=%{buildroot}%{_datadir}/applications cros-garcon/garc
 %files -n cros-garcon
 %{_bindir}/garcon-terminal-handler
 %{_bindir}/garcon-url-handler
+%{_datarootdir}/ansible/plugins/callback/garcon.py
 %{_datarootdir}/applications/garcon_host_browser.desktop
 %{_sysconfdir}/skel/.config/cros-garcon.conf
 %{_userunitdir}/cros-garcon.service
-/usr/share/ansible/plugins/callback/garcon.py
 %license LICENSE
 %doc README.md
 
@@ -384,11 +384,11 @@ desktop-file-install --dir=%{buildroot}%{_datadir}/applications cros-garcon/garc
 %doc README.md
 
 %files -n cros-sudo-config
-%dir /var/lib/polkit-1
-%dir /var/lib/polkit-1/localauthority
-%dir /var/lib/polkit-1/localauthority/10-vendor.d
+%dir %{_sharedstatedir}/polkit-1
+%dir %{_sharedstatedir}/polkit-1/localauthority
+%dir %{_sharedstatedir}/polkit-1/localauthority/10-vendor.d
+%{_sharedstatedir}/polkit-1/localauthority/10-vendor.d/10-cros-nopasswd.pkla
 %config(noreplace) %{_sysconfdir}/sudoers.d/10-cros-nopasswd
-/var/lib/polkit-1/localauthority/10-vendor.d/10-cros-nopasswd.pkla
 %license LICENSE
 %doc README.md
 
@@ -428,7 +428,7 @@ desktop-file-install --dir=%{buildroot}%{_datadir}/applications cros-garcon/garc
 %doc README.md
 
 %files -n cros-ui-config
-%dir /etc/dconf/db/local.d
+%dir %{_sysconfdir}/dconf/db/local.d
 %config(noreplace) %{_sysconfdir}/gtk-2.0/gtkrc
 %{_sysconfdir}/gtk-3.0
 %config(noreplace) %{_sysconfdir}/gtk-3.0/settings.ini
@@ -449,9 +449,9 @@ desktop-file-install --dir=%{buildroot}%{_datadir}/applications cros-garcon/garc
 %doc README.md
 
 %files -n cros-xdg-desktop-portal
-%dir /usr/share/xdg-desktop-portal/
-%dir /usr/share/xdg-desktop-portal/portals
-/usr/share/xdg-desktop-portal/portals/cros.portal
+%dir %{_datarootdir}/xdg-desktop-portal/
+%dir %{_datarootdir}/xdg-desktop-portal/portals
+%{_datarootdir}/xdg-desktop-portal/portals/cros.portal
 %license LICENSE
 %doc README.md
 
