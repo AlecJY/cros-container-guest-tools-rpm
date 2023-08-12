@@ -115,11 +115,11 @@ Chromium OS.
 %systemd_user_preun cros-garcon.service
 
 %package -n cros-host-fonts
-Summary: Chromium OS Host Fonts Configuration
+Summary: Share fonts from Chromium OS
 
 %description -n cros-host-fonts
-Share fonts from Chromium OS. This package provides a config file to search
-for the shared Chromium OS font directory.
+This package provides a config file to search for the shared Chromium OS font
+directory.
 
 %post -n cros-host-fonts
 %systemd_post usr-share-fonts-chromeos.mount
@@ -142,7 +142,7 @@ This package installs D-Bus on-demand service specification for notificationd.
 %systemd_user_preun cros-notificationd.service
 
 %package -n cros-pulse-config
-Summary: PulseAudio helper for Chromium OS integration.
+Summary: PulseAudio helper for Chromium OS integration
 Requires: pulseaudio
 Requires: pulseaudio-utils
 BuildArch: noarch
@@ -163,7 +163,7 @@ This package create a link of sftp-server for enabling SFTP integration with
 Chromium OS.
 
 %package -n cros-sommelier
-Summary: This package installs unit-files and support scripts for sommelier
+Summary: Sommelier base package
 Requires: bash
 Requires: xorg-x11
 Requires: vim
@@ -174,7 +174,7 @@ Recommends: xkeyboard-config
 BuildArch: noarch
 
 %description -n cros-sommelier
-%{summary}
+This package installs unitfiles and support scripts for sommelier.
 
 %post -n cros-sommelier
 %systemd_user_post sommelier@.service
@@ -200,15 +200,14 @@ This package installs default configuration for sommelier that is ideal for
 integration with Chromium OS.
 
 %package -n cros-sudo-config
-Summary: sudo config for Chromium OS integration.
+Summary: Sudo config for Chromium OS integration
 BuildRequires: sudo
 Requires: sudo
 BuildArch: noarch
 
 %description -n cros-sudo-config
-sudo config for Chromium OS integration. This package installs default
-configuration for sudo to allow passwordless sudo access for the sudo group,
-and passwordless pkexec for the sudo group.
+This package installs default configuration for sudo to allow passwordless
+sudo access for the sudo group, and passwordless pkexec for the sudo group.
 
 %package -n cros-ui-config
 %define branding_name cros
