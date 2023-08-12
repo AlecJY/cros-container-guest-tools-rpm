@@ -64,11 +64,13 @@ This package overrides the default behavior of some core systemd units.
 %post -n cros-systemd-overrides
 systemctl mask systemd-journald-audit.socket
 systemctl mask auditd.service
+systemctl mask display-manager.service
 
 %postun -n cros-systemd-overrides
 if [ $1 -eq 0 ] ; then
 systemctl unmask systemd-journald-audit.socket
 systemctl unmask auditd.service
+systemctl unmask display-manager.service
 fi
 
 %package -n cros-logging
@@ -185,15 +187,9 @@ This package installs unitfiles and support scripts for sommelier.
 %systemd_user_post sommelier@.service
 %systemd_user_post sommelier-x@.service
 
-systemctl mask display-manager.service
-
 %preun -n cros-sommelier
 %systemd_user_preun sommelier@.service
 %systemd_user_preun sommelier-x@.service
-
-if [ $1 -eq 0 ] ; then
-systemctl unmask display-manager.service
-fi
 
 %package -n cros-sommelier-config
 Summary: Sommelier config for Chromium OS integration
