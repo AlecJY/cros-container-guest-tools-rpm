@@ -457,6 +457,12 @@ desktop-file-install --dir=%{buildroot}%{_datadir}/applications cros-garcon/garc
 %doc README.md
 
 %changelog
+* Sat Aug 12 2023 Alec Su ae40515@yahoo.com.tw - 117.15572+git.c2d2d80-0
+- Update to release-R117-15572.B c2d2d80
+- Support OpenSUSE
+- Add cros-vmstat-metrics package 
+- Add cros-xdg-desktop-portal package
+
 * Thu Aug 06 2020 Jason Montleon jmontleo@redhat.com - 1.0-0.39.20200806git19eab9e
 - Fix changelog error
 
