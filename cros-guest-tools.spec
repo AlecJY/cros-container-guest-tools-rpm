@@ -260,6 +260,16 @@ BuildArch: noarch
 This package provides config files and udev rules to improve the Wayland
 experience under CrOS.
 
+%package -n cros-xdg-desktop-portal
+Summary: ChromeOS FileChooser backend for xdg-desktop-portal
+Requires: xdg-desktop-portal
+BuildArch: noarch
+
+%description -n cros-xdg-desktop-portal
+cros-xdg-desktop-portal provides a ChromeOS system FileChooser implementation
+for the xdg-desktop-portal service. This allows linux apps to use the system
+FileChooser. This implementation is currently experimental.
+
 %prep
 %setup -q -c
 
@@ -296,6 +306,7 @@ mkdir -p %{buildroot}%{_sysconfdir}/sudoers.d
 mkdir -p %{buildroot}%{_sysconfdir}/fonts/conf.d
 mkdir -p %{buildroot}/var/lib/polkit-1/localauthority/10-vendor.d
 mkdir -p %{buildroot}/usr/share/ansible/plugins/callback
+mkdir -p %{buildroot}/usr/share/xdg-desktop-portal/portals
 mkdir -p %{buildroot}/usr/lib/openssh
 
 export NO_BRP_STALE_LINK_ERROR=yes
@@ -333,6 +344,7 @@ install -m 644 cros-sommelier-config/cros-sommelier-low-density-override.conf %{
 install -m 644 cros-sommelier-config/cros-sommelier-low-density-override.conf %{buildroot}%{_userunitdir}/sommelier-x@1.service.d/cros-sommelier-low-density-override.conf
 install -m 644 cros-notificationd/cros-notificationd.service %{buildroot}%{_userunitdir}/cros-notificationd.service
 install -m 644 cros-logging/00-create-logs-dir.conf %{buildroot}%{_sysconfdir}/tmpfiles.d/00-create-logs-dir.conf
+install -m 644 cros-xdg-desktop-portal/cros.portal %{buildroot}/usr/share/xdg-desktop-portal/portals/cros.portal
 desktop-file-install --dir=%{buildroot}%{_datadir}/applications cros-garcon/garcon_host_browser.desktop
 
 %files
@@ -433,6 +445,13 @@ desktop-file-install --dir=%{buildroot}%{_datadir}/applications cros-garcon/garc
 %files -n cros-wayland
 %config(noreplace) %{_sysconfdir}/skel/.config/weston.ini
 %{_udevrulesdir}/10-cros-virtwl.rules
+%license LICENSE
+%doc README.md
+
+%files -n cros-xdg-desktop-portal
+%dir /usr/share/xdg-desktop-portal/
+%dir /usr/share/xdg-desktop-portal/portals
+/usr/share/xdg-desktop-portal/portals/cros.portal
 %license LICENSE
 %doc README.md
 
