@@ -81,6 +81,9 @@ This package installs configuration for logging integration
 with Chrome OS so e.g. filing feedback reports can collect
 error logs from within the container.
 
+%post -n cros-logging
+%tmpfiles_create %{_tmpfilesdir}/cros-logging.conf
+
 %package -n cros-adapta
 Summary: Chromium OS GTK Theme
 Requires: gtk2-engines
@@ -289,7 +292,7 @@ mkdir -p %{buildroot}%{_sysconfdir}/polkit-1/localauthority/50-local.d
 mkdir -p %{buildroot}%{_sysconfdir}/xdg
 mkdir -p %{buildroot}%{_sysconfdir}/profile.d
 mkdir -p %{buildroot}%{_sysconfdir}/skel/.config/pulse
-mkdir -p %{buildroot}%{_sysconfdir}/tmpfiles.d
+mkdir -p %{buildroot}%{_tmpfilesdir}
 mkdir -p %{buildroot}%{_udevrulesdir}
 mkdir -p %{buildroot}%{_unitdir}
 mkdir -p %{buildroot}%{_userunitdir}
@@ -343,7 +346,7 @@ install -m 644 cros-sommelier-config/cros-sommelier-x-override.conf %{buildroot}
 install -m 644 cros-sommelier-config/cros-sommelier-low-density-override.conf %{buildroot}%{_userunitdir}/sommelier@1.service.d/cros-sommelier-low-density-override.conf
 install -m 644 cros-sommelier-config/cros-sommelier-low-density-override.conf %{buildroot}%{_userunitdir}/sommelier-x@1.service.d/cros-sommelier-low-density-override.conf
 install -m 644 cros-notificationd/cros-notificationd.service %{buildroot}%{_userunitdir}/cros-notificationd.service
-install -m 644 cros-logging/00-create-logs-dir.conf %{buildroot}%{_sysconfdir}/tmpfiles.d/00-create-logs-dir.conf
+install -m 644 cros-logging/00-create-logs-dir.conf %{buildroot}%{_tmpfilesdir}/cros-logging.conf
 install -m 644 cros-xdg-desktop-portal/cros.portal %{buildroot}%{_datarootdir}/xdg-desktop-portal/portals/cros.portal
 desktop-file-install --dir=%{buildroot}%{_datadir}/applications cros-garcon/garcon_host_browser.desktop
 
@@ -360,7 +363,8 @@ desktop-file-install --dir=%{buildroot}%{_datadir}/applications cros-garcon/garc
 %files -n cros-logging
 %license LICENSE
 %doc README.md
-%{_sysconfdir}/tmpfiles.d/00-create-logs-dir.conf
+%{_tmpfilesdir}/cros-logging.conf
+%attr(0755,root,root) %dir %ghost %{_localstatedir}/log/journal
 
 %files -n cros-garcon
 %{_bindir}/garcon-terminal-handler
