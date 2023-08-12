@@ -220,7 +220,7 @@ Summary: UI integration for Chromium OS
 BuildRequires: dconf
 BuildRequires: gtk2
 BuildRequires: gtk3
-Requires: cros-adapta
+Requires: cros-adapta = %{version}-%{release}
 Requires: dconf
 Requires: %{gtk2_real_package} = %{gtk2_version}
 Requires: %{gtk3_real_package} = %{gtk3_version}
