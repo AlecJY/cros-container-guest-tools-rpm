@@ -371,8 +371,8 @@ desktop-file-install --dir=%{buildroot}%{_datadir}/applications cros-garcon/garc
 %{_bindir}/garcon-url-handler
 %{_datarootdir}/ansible/plugins/callback/garcon.py
 %{_datarootdir}/applications/garcon_host_browser.desktop
-%{_sysconfdir}/skel/.config/cros-garcon.conf
 %{_userunitdir}/cros-garcon.service
+%config %{_sysconfdir}/skel/.config/cros-garcon.conf
 %license LICENSE
 %doc README.md
 
@@ -402,8 +402,8 @@ desktop-file-install --dir=%{buildroot}%{_datadir}/applications cros-garcon/garc
 
 %files -n cros-pulse-config
 %dir %{_sysconfdir}/skel/.config/pulse
-%{_sysconfdir}/skel/.config/pulse/daemon.conf
-%{_sysconfdir}/skel/.config/pulse/default.pa
+%config %{_sysconfdir}/skel/.config/pulse/daemon.conf
+%config %{_sysconfdir}/skel/.config/pulse/default.pa
 %license LICENSE
 %doc README.md
 
@@ -415,7 +415,7 @@ desktop-file-install --dir=%{buildroot}%{_datadir}/applications cros-garcon/garc
 
 %files -n cros-sommelier
 %{_bindir}/sommelier
-%{_sysconfdir}/skel/.sommelierrc
+%config %{_sysconfdir}/skel/.sommelierrc
 %config(noreplace) %{_sysconfdir}/sommelierrc
 %config(noreplace) %{_sysconfdir}/profile.d/sommelier.sh
 %{_userunitdir}/sommelier@.service
