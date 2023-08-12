@@ -5,7 +5,7 @@ Version: 117.15572+git.%{hash}
 Release: 0
 Summary: Chromium OS integration meta package
 
-License: BSD	
+License: BSD-3-Clause
 URL: https://chromium.googlesource.com/chromiumos/containers/cros-container-guest-tools/
 Source0: https://chromium.googlesource.com/chromiumos/containers/cros-container-guest-tools/+archive/%{hash}.tar.gz#/%{name}-%{hash}.tar.gz
 Patch0: disable-auto-update.patch
