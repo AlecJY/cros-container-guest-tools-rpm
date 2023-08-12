@@ -11,6 +11,7 @@ Source0: https://chromium.googlesource.com/chromiumos/containers/cros-container-
 Patch0: disable-auto-update.patch
 Patch1: fix-paths.patch
 Patch2: fix-desktop-file.patch
+Patch3: crostini_metric_reporter-force-start.patch
 BuildArch: noarch
 BuildRequires: desktop-file-utils
 BuildRequires: systemd
@@ -237,6 +238,20 @@ BuildArch: noarch
 This package installs default configuration for GTK+ that is ideal for
 integration with Chromium OS.
 
+%package -n cros-vmstat-metrics
+Summary: Chromium OS VMStat Metrics Reporting Daemon
+BuildArch: noarch
+
+%description -n cros-vmstat-metrics
+This package installs a systemd service which monitors /proc/vmstat and
+reports metrics via garcon
+
+%post -n cros-vmstat-metrics
+%systemd_user_post cros-vmstat-metrics.service
+
+%preun -n cros-vmstat-metrics
+%systemd_user_preun cros-vmstat-metrics.service
+
 %package -n cros-wayland
 Summary: Wayland extras for virtwl in Chromium OS
 BuildArch: noarch
@@ -251,6 +266,7 @@ experience under CrOS.
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
 
 %build
 
@@ -310,6 +326,7 @@ install -m 644 cros-host-fonts/usr-share-fonts-chromeos.mount %{buildroot}%{_uni
 install -m 644 cros-garcon/cros-garcon.service %{buildroot}%{_userunitdir}/cros-garcon.service
 install -m 644 cros-sommelier/sommelier@.service %{buildroot}%{_userunitdir}/sommelier@.service
 install -m 644 cros-sommelier/sommelier-x@.service %{buildroot}%{_userunitdir}/sommelier-x@.service
+install -m 644 cros-vmstat-metrics/cros-vmstat-metrics.service %{buildroot}%{_userunitdir}/cros-vmstat-metrics.service
 install -m 644 cros-sommelier-config/cros-sommelier-override.conf %{buildroot}%{_userunitdir}/sommelier@0.service.d/cros-sommelier-override.conf
 install -m 644 cros-sommelier-config/cros-sommelier-x-override.conf %{buildroot}%{_userunitdir}/sommelier-x@0.service.d/cros-sommelier-x-override.conf
 install -m 644 cros-sommelier-config/cros-sommelier-low-density-override.conf %{buildroot}%{_userunitdir}/sommelier@1.service.d/cros-sommelier-low-density-override.conf
@@ -405,6 +422,11 @@ desktop-file-install --dir=%{buildroot}%{_datadir}/applications cros-garcon/garc
 %config(noreplace) %{_sysconfdir}/gtk-3.0/settings.ini
 %config(noreplace) %{_sysconfdir}/xdg/Trolltech.conf
 %config(noreplace) %{_sysconfdir}/dconf/db/local.d/01-cros-ui
+%license LICENSE
+%doc README.md
+
+%files -n cros-vmstat-metrics
+%{_userunitdir}/cros-vmstat-metrics.service
 %license LICENSE
 %doc README.md
 

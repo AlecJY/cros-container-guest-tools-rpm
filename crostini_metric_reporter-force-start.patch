@@ -1,0 +1,26 @@
+From 578831eb0040ae2dc344fc2b39bf8355edbcb2cc Mon Sep 17 00:00:00 2001
+From: Alec Su <ae40515@yahoo.com.tw>
+Date: Sat, 12 Aug 2023 08:26:40 +0000
+Subject: [PATCH] Add --run-outside-crostini to force crostini_metric_reporter
+ to start
+
+crostini_metric_reporter can only be executed when the hostname is
+penguin. Therefore, add --run-outside-crostini to force
+crostini_metric_reporter to start.
+---
+ cros-vmstat-metrics/cros-vmstat-metrics.service | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/cros-vmstat-metrics/cros-vmstat-metrics.service b/cros-vmstat-metrics/cros-vmstat-metrics.service
+index ca96189..5989522 100644
+--- a/cros-vmstat-metrics/cros-vmstat-metrics.service
++++ b/cros-vmstat-metrics/cros-vmstat-metrics.service
+@@ -4,7 +4,7 @@ After=cros-garcon.service
+ 
+ [Service]
+ Type=simple
+-ExecStart=/opt/google/cros-containers/bin/crostini_metric_reporter
++ExecStart=/opt/google/cros-containers/bin/crostini_metric_reporter --run-outside-crostini
+ ExecStopPost=/opt/google/cros-containers/bin/guest_service_failure_notifier cros-vmstat-metrics
+ Restart=always
+ 
