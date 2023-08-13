@@ -9,6 +9,7 @@ License: BSD-3-Clause
 Group: System/Emulators/PC
 URL: https://chromium.googlesource.com/chromiumos/containers/cros-container-guest-tools/
 Source0: https://chromium.googlesource.com/chromiumos/containers/cros-container-guest-tools/+archive/%{hash}.tar.gz#/%{name}-%{hash}.tar.gz
+Source100: cros-sudo-config.sysusers
 Patch0: disable-auto-update.patch
 Patch1: fix-paths.patch
 Patch2: fix-desktop-file.patch
@@ -203,7 +204,9 @@ integration with Chromium OS.
 %package -n cros-sudo-config
 Summary: Sudo config for Chromium OS integration
 BuildRequires: sudo
+BuildRequires: sysuser-tools
 Requires: sudo
+%sysusers_requires
 BuildArch: noarch
 
 %description -n cros-sudo-config
@@ -279,6 +282,7 @@ FileChooser. This implementation is currently experimental.
 %patch3 -p1
 
 %build
+%sysusers_generate_pre %{SOURCE100} sudo cros-sudo-config.conf
 
 %install
 mkdir -p %{buildroot}%{_bindir}
@@ -289,6 +293,7 @@ mkdir -p %{buildroot}%{_sysconfdir}/polkit-1/localauthority/50-local.d
 mkdir -p %{buildroot}%{_sysconfdir}/xdg
 mkdir -p %{buildroot}%{_sysconfdir}/profile.d
 mkdir -p %{buildroot}%{_sysconfdir}/skel/.config/pulse
+mkdir -p %{buildroot}%{_sysusersdir}
 mkdir -p %{buildroot}%{_tmpfilesdir}
 mkdir -p %{buildroot}%{_udevrulesdir}
 mkdir -p %{buildroot}%{_unitdir}
@@ -313,6 +318,8 @@ export NO_BRP_STALE_LINK_ERROR=yes
 ln -sf /opt/google/cros-containers/bin/sommelier %{buildroot}%{_bindir}/sommelier
 ln -sf /opt/google/cros-containers/cros-adapta %{buildroot}%{_datarootdir}/themes/CrosAdapta
 ln -sf /usr/lib/ssh/sftp-server %{buildroot}/usr/lib/openssh/sftp-server
+
+install -m 644 %{SOURCE100} %{buildroot}%{_sysusersdir}/cros-sudo-config.conf
 
 install -m 644 cros-garcon/third_party/garcon.py %{buildroot}%{_datarootdir}/ansible/plugins/callback/garcon.py
 install -m 440 cros-sudo-config/10-cros-nopasswd %{buildroot}%{_sysconfdir}/sudoers.d/10-cros-nopasswd
@@ -346,6 +353,8 @@ install -m 644 cros-notificationd/cros-notificationd.service %{buildroot}%{_user
 install -m 644 cros-logging/00-create-logs-dir.conf %{buildroot}%{_tmpfilesdir}/cros-logging.conf
 install -m 644 cros-xdg-desktop-portal/cros.portal %{buildroot}%{_datarootdir}/xdg-desktop-portal/portals/cros.portal
 desktop-file-install --dir=%{buildroot}%{_datadir}/applications cros-garcon/garcon_host_browser.desktop
+
+%pre -n cros-sudo-config -f sudo.pre
 
 %files
 %dir %{_sysconfdir}/skel/.config
@@ -389,6 +398,7 @@ desktop-file-install --dir=%{buildroot}%{_datadir}/applications cros-garcon/garc
 %dir %{_sharedstatedir}/polkit-1/localauthority
 %dir %{_sharedstatedir}/polkit-1/localauthority/10-vendor.d
 %{_sharedstatedir}/polkit-1/localauthority/10-vendor.d/10-cros-nopasswd.pkla
+%{_sysusersdir}/cros-sudo-config.conf
 %config(noreplace) %{_sysconfdir}/sudoers.d/10-cros-nopasswd
 %license LICENSE
 %doc README.md
