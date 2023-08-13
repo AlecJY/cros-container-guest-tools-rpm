@@ -121,6 +121,10 @@ Chromium OS.
 
 %post -n cros-garcon
 %systemd_user_post cros-garcon.service
+# FIXME: workaround to make sure the user service symlink creation (bsc#1083473)
+if [ ! -f /etc/systemd/user/default.target.wants/cros-garcon.service ]; then
+  %{_bindir}/systemctl --user --global enable cros-garcon.service
+fi
 
 %preun -n cros-garcon
 %systemd_user_preun cros-garcon.service
@@ -190,6 +194,19 @@ This package installs unitfiles and support scripts for sommelier.
 %systemd_user_post sommelier@1.service
 %systemd_user_post sommelier-x@0.service
 %systemd_user_post sommelier-x@1.service
+# FIXME: workaround to make sure the user service symlink creation (bsc#1083473)
+if [ ! -f /etc/systemd/user/default.target.wants/sommelier@0.service ]; then
+  %{_bindir}/systemctl --user --global enable sommelier@0.service
+fi
+if [ ! -f /etc/systemd/user/default.target.wants/sommelier@1.service ]; then
+  %{_bindir}/systemctl --user --global enable sommelier@1.service
+fi
+if [ ! -f /etc/systemd/user/default.target.wants/sommelier-x@0.service ]; then
+  %{_bindir}/systemctl --user --global enable sommelier-x@0.service
+fi
+if [ ! -f /etc/systemd/user/default.target.wants/sommelier-x@1.service ]; then
+  %{_bindir}/systemctl --user --global enable sommelier-x@1.service
+fi
 
 %preun -n cros-sommelier
 %systemd_user_preun sommelier@0.service
@@ -257,6 +274,10 @@ reports metrics via garcon
 
 %post -n cros-vmstat-metrics
 %systemd_user_post cros-vmstat-metrics.service
+# FIXME: workaround to make sure the user service symlink creation (bsc#1083473)
+if [ ! -f /etc/systemd/user/default.target.wants/cros-vmstat-metrics.service ]; then
+  %{_bindir}/systemctl --user --global enable cros-vmstat-metrics.service
+fi
 
 %preun -n cros-vmstat-metrics
 %systemd_user_preun cros-vmstat-metrics.service
