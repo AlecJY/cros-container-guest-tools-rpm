@@ -127,6 +127,8 @@ Chromium OS.
 
 %package -n cros-host-fonts
 Summary: Share fonts from Chromium OS
+Requires: systemd
+BuildArch: noarch
 
 %description -n cros-host-fonts
 This package provides a config file to search for the shared Chromium OS font
@@ -141,6 +143,7 @@ directory.
 %package -n cros-notificationd
 Summary: Chromium OS Notification Bridge
 Requires: dbus-1
+Requires: systemd
 BuildArch: noarch
 
 %description -n cros-notificationd
@@ -172,6 +175,7 @@ Summary: Sommelier base package
 Requires: bash
 Requires: xorg-x11
 Requires: vim
+Requires: systemd
 Recommends: xorg-x11-server
 Recommends: xauth
 Recommends: xorg-x11-fonts
@@ -244,6 +248,7 @@ integration with Chromium OS.
 
 %package -n cros-vmstat-metrics
 Summary: Chromium OS VMStat Metrics Reporting Daemon
+Requires: systemd
 BuildArch: noarch
 
 %description -n cros-vmstat-metrics
