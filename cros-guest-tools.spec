@@ -10,6 +10,9 @@ Group: System/Emulators/PC
 URL: https://chromium.googlesource.com/chromiumos/containers/cros-container-guest-tools/
 Source0: https://chromium.googlesource.com/chromiumos/containers/cros-container-guest-tools/+archive/%{hash}.tar.gz#/%{name}-%{hash}.tar.gz
 Source100: cros-sudo-config.sysusers
+Source101: cros-garcon.preset
+Source102: cros-sommelier.preset
+Source103: cros-vmstat-metrics.preset
 Patch0: disable-auto-update.patch
 Patch1: fix-paths.patch
 Patch2: fix-desktop-file.patch
@@ -185,12 +188,16 @@ BuildArch: noarch
 This package installs unitfiles and support scripts for sommelier.
 
 %post -n cros-sommelier
-%systemd_user_post sommelier@.service
-%systemd_user_post sommelier-x@.service
+%systemd_user_post sommelier@0.service
+%systemd_user_post sommelier@1.service
+%systemd_user_post sommelier-x@0.service
+%systemd_user_post sommelier-x@1.service
 
 %preun -n cros-sommelier
-%systemd_user_preun sommelier@.service
-%systemd_user_preun sommelier-x@.service
+%systemd_user_preun sommelier@0.service
+%systemd_user_preun sommelier@1.service
+%systemd_user_preun sommelier-x@0.service
+%systemd_user_preun sommelier-x@1.service
 
 %package -n cros-sommelier-config
 Summary: Sommelier config for Chromium OS integration
@@ -311,7 +318,10 @@ mkdir -p %{buildroot}%{_userunitdir}/pulseaudio.service.wants
 mkdir -p %{buildroot}%{_userunitdir}/default.target.wants
 mkdir -p %{buildroot}%{_sysconfdir}/sudoers.d
 mkdir -p %{buildroot}%{_sysconfdir}/fonts/conf.d
+mkdir -p %{buildroot}%{_sysconfdir}/systemd/user/default.target.wants
 mkdir -p %{buildroot}%{_sharedstatedir}/polkit-1/localauthority/10-vendor.d
+mkdir -p %{buildroot}%{_prefix}/lib/systemd/system-preset
+mkdir -p %{buildroot}%{_prefix}/lib/systemd/user-preset
 mkdir -p %{buildroot}/usr/lib/openssh
 
 export NO_BRP_STALE_LINK_ERROR=yes
@@ -320,6 +330,9 @@ ln -sf /opt/google/cros-containers/cros-adapta %{buildroot}%{_datarootdir}/theme
 ln -sf /usr/lib/ssh/sftp-server %{buildroot}/usr/lib/openssh/sftp-server
 
 install -m 644 %{SOURCE100} %{buildroot}%{_sysusersdir}/cros-sudo-config.conf
+install -m 644 %{SOURCE101} %{buildroot}%{_prefix}/lib/systemd/user-preset/80-cros-garcon.preset
+install -m 644 %{SOURCE102} %{buildroot}%{_prefix}/lib/systemd/user-preset/80-cros-sommelier.preset
+install -m 644 %{SOURCE103} %{buildroot}%{_prefix}/lib/systemd/user-preset/80-cros-vmstat-metrics.preset
 
 install -m 644 cros-garcon/third_party/garcon.py %{buildroot}%{_datarootdir}/ansible/plugins/callback/garcon.py
 install -m 440 cros-sudo-config/10-cros-nopasswd %{buildroot}%{_sysconfdir}/sudoers.d/10-cros-nopasswd
@@ -373,11 +386,13 @@ desktop-file-install --dir=%{buildroot}%{_datadir}/applications cros-garcon/garc
 %attr(0755,root,root) %dir %ghost %{_localstatedir}/log/journal
 
 %files -n cros-garcon
+%dir %{_sysconfdir}/systemd/user/default.target.wants
 %{_bindir}/garcon-terminal-handler
 %{_bindir}/garcon-url-handler
 %{_datarootdir}/ansible/plugins/callback/garcon.py
 %{_datarootdir}/applications/garcon_host_browser.desktop
 %{_userunitdir}/cros-garcon.service
+%{_prefix}/lib/systemd/user-preset/80-cros-garcon.preset
 %config %{_sysconfdir}/skel/.config/cros-garcon.conf
 %license LICENSE
 %doc README.md
@@ -421,12 +436,14 @@ desktop-file-install --dir=%{buildroot}%{_datadir}/applications cros-garcon/garc
 %doc README.md
 
 %files -n cros-sommelier
+%dir %{_sysconfdir}/systemd/user/default.target.wants
 %{_bindir}/sommelier
 %config %{_sysconfdir}/skel/.sommelierrc
 %config(noreplace) %{_sysconfdir}/sommelierrc
 %config(noreplace) %{_sysconfdir}/profile.d/sommelier.sh
 %{_userunitdir}/sommelier@.service
 %{_userunitdir}/sommelier-x@.service
+%{_prefix}/lib/systemd/user-preset/80-cros-sommelier.preset
 %license LICENSE
 %doc README.md
 
@@ -449,7 +466,9 @@ desktop-file-install --dir=%{buildroot}%{_datadir}/applications cros-garcon/garc
 %doc README.md
 
 %files -n cros-vmstat-metrics
+%dir %{_sysconfdir}/systemd/user/default.target.wants
 %{_userunitdir}/cros-vmstat-metrics.service
+%{_prefix}/lib/systemd/user-preset/80-cros-vmstat-metrics.preset
 %license LICENSE
 %doc README.md
 

@@ -1,0 +1,4 @@
+enable sommelier@0.service
+enable sommelier@1.service
+enable sommelier-x@0.service
+enable sommelier-x@1.service
