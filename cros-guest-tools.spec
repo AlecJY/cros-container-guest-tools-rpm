@@ -146,12 +146,6 @@ BuildArch: noarch
 %description -n cros-notificationd
 This package installs D-Bus on-demand service specification for notificationd.
 
-%post -n cros-notificationd
-%systemd_user_post cros-notificationd.service
-
-%preun -n cros-notificationd
-%systemd_user_preun cros-notificationd.service
-
 %package -n cros-pulse-config
 Summary: PulseAudio helper for Chromium OS integration
 Requires: pulseaudio
