@@ -2,7 +2,7 @@
 
 Name: cros-guest-tools		
 Version: 117.15572+git.%{hash}
-Release: 1
+Release: 2
 Summary: Chromium OS integration meta package
 
 License: BSD-3-Clause
@@ -506,6 +506,9 @@ desktop-file-install --dir=%{buildroot}%{_datadir}/applications cros-garcon/garc
 %doc README.md
 
 %changelog
+* Tue Aug 15 2023 Alec Su ae40515@yahoo.com.tw - 117.15572+git.c2d2d80-2
+- Fix sftp-server link issue in openSUSE Tumbleweed
+
 * Mon Aug 14 2023 Alec Su ae40515@yahoo.com.tw - 117.15572+git.c2d2d80-1
 - Enable services by default
 - Add sysusers config to create "sudo" group in cros-sudo-config
