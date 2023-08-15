@@ -347,7 +347,7 @@ mkdir -p %{buildroot}/usr/lib/openssh
 export NO_BRP_STALE_LINK_ERROR=yes
 ln -sf /opt/google/cros-containers/bin/sommelier %{buildroot}%{_bindir}/sommelier
 ln -sf /opt/google/cros-containers/cros-adapta %{buildroot}%{_datarootdir}/themes/CrosAdapta
-ln -sf /usr/lib/ssh/sftp-server %{buildroot}/usr/lib/openssh/sftp-server
+ln -sf %{_libexecdir}/ssh/sftp-server %{buildroot}/usr/lib/openssh/sftp-server
 
 install -m 644 %{SOURCE100} %{buildroot}%{_sysusersdir}/cros-sudo-config.conf
 install -m 644 %{SOURCE101} %{buildroot}%{_prefix}/lib/systemd/user-preset/80-cros-garcon.preset
