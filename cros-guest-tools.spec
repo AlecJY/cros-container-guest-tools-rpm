@@ -2,7 +2,7 @@
 
 Name: cros-guest-tools		
 Version: 117.15572+git.%{hash}
-Release: 2
+Release: 3
 Summary: Chromium OS integration meta package
 
 License: BSD-3-Clause
@@ -22,6 +22,7 @@ BuildRequires: desktop-file-utils
 BuildRequires: systemd
 Recommends: bash-completion
 Recommends: bzip2
+Recommends: cros-im
 Recommends: curl
 Recommends: dbus-x11
 Recommends: file
@@ -506,6 +507,9 @@ desktop-file-install --dir=%{buildroot}%{_datadir}/applications cros-garcon/garc
 %doc README.md
 
 %changelog
+* Wed Aug 16 2023 Alec Su ae40515@yahoo.com.tw - 117.15572+git.c2d2d80-3
+- Add cros-im as a recommend package
+
 * Tue Aug 15 2023 Alec Su ae40515@yahoo.com.tw - 117.15572+git.c2d2d80-2
 - Fix sftp-server link issue in openSUSE Tumbleweed
 
