@@ -2,7 +2,7 @@
 
 Name: cros-guest-tools		
 Version: 117.15572+git.%{hash}
-Release: 3
+Release: 4
 Summary: Chromium OS integration meta package
 
 License: BSD-3-Clause
@@ -114,6 +114,8 @@ Requires: xdg-utils
 Requires: ansible
 Requires: systemd
 Requires: cros-sftp = %{version}-%{release}
+Requires(post): update-alternatives
+Requires(postun): update-alternatives
 BuildArch: noarch
 
 %description -n cros-garcon
@@ -127,8 +129,26 @@ if [ ! -f /etc/systemd/user/default.target.wants/cros-garcon.service ]; then
   %{_bindir}/systemctl --user --global enable cros-garcon.service
 fi
 
+update-alternatives --install %{_bindir}/x-www-browser x-www-browser %{_bindir}/garcon-url-handler 200
+update-alternatives --install %{_bindir}/www-browser www-browser %{_bindir}/garcon-url-handler 200
+update-alternatives --install %{_bindir}/gnome-www-browser gnome-www-browser %{_bindir}/garcon-url-handler 200
+update-alternatives --install %{_bindir}/x-terminal-emulator x-terminal-emulator %{_bindir}/garcon-terminal-handler 200
+
+# Make xdg-desktop-menu happy when installing system desktop files.
+mkdir -p %{_datarootdir}/desktop-directories
+
 %preun -n cros-garcon
 %systemd_user_preun cros-garcon.service
+
+%postun -n cros-garcon
+if [ ! -f %{_bindir}/garcon-terminal-handler ] ; then
+  update-alternatives --remove x-terminal-emulator %{_bindir}/garcon-terminal-handler
+fi
+if [ ! -f %{_bindir}/garcon-url-handler ] ; then
+  update-alternatives --remove gnome-www-browser %{_bindir}/garcon-url-handler
+  update-alternatives --remove www-browser %{_bindir}/garcon-url-handler
+  update-alternatives --remove x-www-browser %{_bindir}/garcon-url-handler
+fi
 
 %package -n cros-host-fonts
 Summary: Share fonts from Chromium OS
@@ -314,6 +334,7 @@ FileChooser. This implementation is currently experimental.
 
 %install
 mkdir -p %{buildroot}%{_bindir}
+mkdir -p %{buildroot}%{_sysconfdir}/alternatives
 mkdir -p %{buildroot}%{_sysconfdir}/dconf/db/local.d
 mkdir -p %{buildroot}%{_sysconfdir}/gtk-2.0
 mkdir -p %{buildroot}%{_sysconfdir}/gtk-3.0
@@ -349,6 +370,11 @@ export NO_BRP_STALE_LINK_ERROR=yes
 ln -sf /opt/google/cros-containers/bin/sommelier %{buildroot}%{_bindir}/sommelier
 ln -sf /opt/google/cros-containers/cros-adapta %{buildroot}%{_datarootdir}/themes/CrosAdapta
 ln -sf %{_libexecdir}/ssh/sftp-server %{buildroot}/usr/lib/openssh/sftp-server
+
+ln -sf %{_sysconfdir}/alternatives/x-terminal-emulator %{buildroot}%{_bindir}/x-terminal-emulator
+ln -sf %{_sysconfdir}/alternatives/gnome-www-browser %{buildroot}%{_bindir}/gnome-www-browser
+ln -sf %{_sysconfdir}/alternatives/www-browser %{buildroot}%{_bindir}/www-browser
+ln -sf %{_sysconfdir}/alternatives/x-www-browser %{buildroot}%{_bindir}/x-www-browser
 
 install -m 644 %{SOURCE100} %{buildroot}%{_sysusersdir}/cros-sudo-config.conf
 install -m 644 %{SOURCE101} %{buildroot}%{_prefix}/lib/systemd/user-preset/80-cros-garcon.preset
@@ -410,11 +436,19 @@ desktop-file-install --dir=%{buildroot}%{_datadir}/applications cros-garcon/garc
 %dir %{_sysconfdir}/systemd/user/default.target.wants
 %{_bindir}/garcon-terminal-handler
 %{_bindir}/garcon-url-handler
+%{_bindir}/x-terminal-emulator
+%{_bindir}/gnome-www-browser
+%{_bindir}/www-browser
+%{_bindir}/x-www-browser
 %{_datarootdir}/ansible/plugins/callback/garcon.py
 %{_datarootdir}/applications/garcon_host_browser.desktop
 %{_userunitdir}/cros-garcon.service
 %{_prefix}/lib/systemd/user-preset/80-cros-garcon.preset
 %config %{_sysconfdir}/skel/.config/cros-garcon.conf
+%ghost %{_sysconfdir}/alternatives/x-terminal-emulator
+%ghost %{_sysconfdir}/alternatives/gnome-www-browser
+%ghost %{_sysconfdir}/alternatives/www-browser
+%ghost %{_sysconfdir}/alternatives/x-www-browser
 %license LICENSE
 %doc README.md
 
@@ -507,6 +541,9 @@ desktop-file-install --dir=%{buildroot}%{_datadir}/applications cros-garcon/garc
 %doc README.md
 
 %changelog
+* Thu Aug 17 2023 Alec Su ae40515@yahoo.com.tw - 117.15572+git.c2d2d80-4
+- Add the missing post script in cros-garcon
+
 * Wed Aug 16 2023 Alec Su ae40515@yahoo.com.tw - 117.15572+git.c2d2d80-3
 - Add cros-im as a recommend package
 
